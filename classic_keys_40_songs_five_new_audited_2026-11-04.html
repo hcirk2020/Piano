@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>Classic Keys — Piano Practice</title>
+<style>
+:root{
+  --bg:#090e1d;--panel:#121a2c;--panel2:#172238;--line:#263550;--muted:#91a0b9;--text:#eef4ff;
+  --gold:#f4c76b;--cyan:#65d9e8;--green:#61d8a2;--red:#ff7d89;--purple:#a99aff;
+  --white-key:#f8f7f3;--white-key-edge:#c6c8d0;--black-key:#222939;--black-key-edge:#080c15;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{overflow-x:hidden}
+button,select,input{font:inherit}
+button{cursor:pointer}
+#frame{width:100%;max-width:430px;min-height:100svh;margin:0 auto;padding:12px 12px 18px;background:radial-gradient(ellipse at 50% -15%,#243358 0%,#111a30 36%,#090e1d 76%);}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;min-height:42px}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,#f8d88a,#e6a949);display:grid;place-items:center;color:#1a2132;font-weight:900;box-shadow:0 5px 18px #e3ae4a33}
+.brand-name{font-size:14px;font-weight:850;letter-spacing:.14em;white-space:nowrap}
+.brand-sub{font-size:9px;color:#9eabc2;letter-spacing:.17em;margin-top:2px}
+.mode-switch{display:flex;gap:3px;padding:3px;background:#10192b;border:1px solid var(--line);border-radius:11px;flex-shrink:0}
+.mode-switch button{border:0;border-radius:8px;padding:7px 9px;color:#9eabc2;background:transparent;font-size:10px;font-weight:750}
+.mode-switch button.active{color:#151b28;background:#eec66e;box-shadow:0 2px 8px #eec66e33}
+.workspace{display:flex;flex-direction:column;gap:10px}
+.main-column,.side-column{min-width:0}
+.song-card,.score-card,.settings-card,.keyboard-card,.help-card{border:1px solid #263650;background:linear-gradient(155deg,#17233aee,#10192bee);border-radius:17px;box-shadow:0 10px 28px #02061155}
+.song-card{padding:11px 12px;margin-bottom:10px}
+.song-row{display:flex;align-items:center;gap:8px}
+.select-wrap{flex:1;min-width:0}
+.eyebrow{font-size:9px;font-weight:800;color:#8f9db6;letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px}
+select{width:100%;min-width:0;background:#0c1424;color:#f1f5ff;border:1px solid #34445f;border-radius:9px;padding:9px 30px 9px 10px;font-size:12px;outline:none}
+.song-info{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}
+.song-title{font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song-composer{font-size:10px;color:#9ba9c0;margin-top:2px}
+.length-pill{font-size:10px;color:#e9c978;border:1px solid #695936;background:#342b1b;border-radius:20px;padding:5px 8px;white-space:nowrap}
+.song-actions{display:flex;gap:6px;margin-top:9px}
+.btn{border:1px solid #3c4c68;background:#1b2941;color:#dce7fb;border-radius:10px;padding:8px 10px;font-size:10px;font-weight:800;letter-spacing:.02em}
+.btn.primary{background:linear-gradient(135deg,#f4d485,#e8af55);border-color:#f2cd7e;color:#182033;box-shadow:0 5px 15px #dfa94c26}
+.btn.small{padding:7px 9px;font-size:9px}
+.mode-tabs{display:flex;gap:5px;margin:0 0 10px;padding:4px;background:#0d1627;border:1px solid #24334e;border-radius:12px}
+.mode-tabs button{flex:1;border:0;background:transparent;color:#92a0b7;border-radius:8px;padding:9px 7px;font-size:11px;font-weight:800}
+.mode-tabs button.active{background:#263754;color:#f5d487;box-shadow:inset 0 0 0 1px #576b8d}
+.score-card{padding:10px 9px 11px;position:relative;overflow:hidden}
+.score-top{display:flex;align-items:center;justify-content:space-between;gap:7px;padding:0 3px 8px}
+.score-heading{font-size:10px;font-weight:850;letter-spacing:.14em;color:#bcc9dc}
+.key-meta{font-size:9px;color:#9baac1;white-space:nowrap}
+#scoreCanvas{width:100%;height:220px;display:block;border-radius:11px;background:linear-gradient(180deg,#0c1527,#101d32);border:1px solid #253754;touch-action:pan-y}
+.score-legend{display:flex;justify-content:space-between;gap:8px;padding:7px 4px 1px;color:#7f91ad;font-size:9px}
+.target-label{color:#e7ca82;font-weight:800}#notationLegend{display:inline-flex;align-items:center;gap:4px;color:#b9aaff;font-weight:850;font-size:7px;white-space:nowrap;margin-right:7px}.legend-dot{width:7px;height:7px;border-radius:50%;display:inline-block}.white-note-dot{background:#c6b5ff;box-shadow:0 0 6px #c6b5ff88}.black-note-dot{background:#4bd8e8;box-shadow:0 0 6px #4bd8e888}
+.feedback-row{display:grid;grid-template-columns:1.15fr .85fr;gap:7px;margin-top:8px}
+.feedback{min-height:54px;border:1px solid #31435f;border-radius:10px;background:#0c1525;padding:8px 9px;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.feedback strong{font-size:12px;color:#f1d386;letter-spacing:.02em}
+.feedback span{font-size:9px;color:#9baac0;line-height:1.35}
+.next-note{border:1px solid #31435f;border-radius:10px;background:#0c1525;padding:8px 9px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.next-note .note-big{font-size:21px;font-weight:900;color:#f5d17b;line-height:1.05}
+.next-note small{font-size:8px;color:#8f9eb6;letter-spacing:.14em;margin-top:4px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.metric{background:#101a2c;border:1px solid #283954;border-radius:9px;padding:7px 8px;min-width:0}
+.metric .v{font-size:15px;font-weight:900;color:#f3f6ff;font-variant-numeric:tabular-nums}
+.metric .k{font-size:8px;color:#8393ad;letter-spacing:.12em;margin-top:2px}
+.progress-track{height:4px;background:#263550;border-radius:9px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#55cfdc,#f1c66e);border-radius:9px;transition:width .12s linear}
+.settings-card{padding:10px 11px;margin-top:10px}
+.settings-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.settings-title strong{font-size:10px;letter-spacing:.15em}
+.settings-title span{font-size:9px;color:#8696b0}.setting-hint{display:block;color:#8292ad;font-size:8px;line-height:1.35;margin-top:2px}
+.setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.setting label{display:flex;justify-content:space-between;align-items:center;color:#9eabc1;font-size:9px;margin-bottom:5px}
+.setting output{color:#f0d183;font-weight:800;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#eac16c;height:16px;margin:0;background:transparent}
+.checkline{display:flex;align-items:center;gap:7px;color:#b7c4d8;font-size:10px;grid-column:span 2;margin-top:0}
+.checkline input{accent-color:#eac16c;width:15px;height:15px}.color-key-hint{margin-left:auto;color:#b9aaff;font-size:8px;white-space:nowrap}
+.keyboard-card{padding:10px 9px 12px}
+.keyboard-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0 2px 8px}
+.keyboard-head strong{font-size:10px;letter-spacing:.13em}
+.keyboard-head span{font-size:8px;color:#8e9cb5}
+.keyboard{position:relative;width:100%;height:144px;user-select:none;touch-action:pan-y;overflow:hidden;border-radius:8px;background:#090e18;border:1px solid #050912}
+.white-keys{display:flex;width:100%;height:100%}
+.piano-key{position:relative;border:0;outline:0;display:flex;align-items:flex-end;justify-content:center;padding:0 0 7px;touch-action:manipulation;user-select:none}
+.piano-key.white{height:100%;flex:1;min-width:0;background:linear-gradient(90deg,#e9e8e3,#fffefa 45%,#e5e4df);border-right:1px solid #bfc2c7;border-bottom:4px solid #c2c4c8;border-radius:0 0 4px 4px;color:#536072;z-index:1}
+.piano-key.white:active,.piano-key.white.pressed{background:linear-gradient(180deg,#fff7d8,#e8c777);border-bottom-color:#c18e38}
+.piano-key.black{position:absolute;top:0;height:62%;width:4.43%;background:linear-gradient(100deg,#080d18,#30394a 45%,#121927);border:1px solid #050914;border-top:0;border-radius:0 0 5px 5px;z-index:3;color:#cbd4e3;padding-bottom:5px;box-shadow:0 4px 5px #03060b99}
+.piano-key.black:active,.piano-key.black.pressed{background:linear-gradient(180deg,#4b5263,#a88646);color:#fff}
+.key-label{font-size:7px;font-weight:750;white-space:nowrap;pointer-events:none}
+.black .key-label{font-size:6px;color:#d9e0ed}
+.computer-hint{font-size:8px;color:#8796af;text-align:center;margin-top:7px;letter-spacing:.02em}
+.help-card{padding:9px 11px;margin-top:9px;color:#9aa9c0;font-size:9px;line-height:1.5}
+.help-card b{color:#e7c978}
+.footer-note{text-align:center;font-size:8px;line-height:1.45;color:#65748d;padding:10px 8px 0}
+.desktop-only-note{display:none}
+#songFile{display:none}
+.feedback.good strong{color:var(--green)}.feedback.bad strong{color:var(--red)}.feedback.perfect strong{color:#f5d17b}
+@media (max-height:760px) and (max-width:600px){#frame{padding-top:8px}.topbar{margin-bottom:8px}.song-card{padding:8px 10px;margin-bottom:7px}.score-card{padding-top:7px}#scoreCanvas{height:190px}.keyboard{height:126px}.settings-card{padding:8px 10px;margin-top:7px}.keyboard-card{padding-top:8px}.help-card{margin-top:7px}}
+#frame.desktop-mode{max-width:1420px;min-height:100vh;padding:18px 22px;background:radial-gradient(ellipse at 20% 0%,#25375d 0%,#111a30 42%,#090e1d 85%)}
+.desktop-mode .topbar{margin-bottom:16px}
+.desktop-mode .workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,420px);align-items:start;gap:16px}
+.desktop-mode .song-card{padding:14px 16px}
+.desktop-mode .score-card{padding:14px}
+.desktop-mode #scoreCanvas{height:310px}
+.desktop-mode .side-column{position:sticky;top:14px}
+.desktop-mode .keyboard-card{padding:15px;margin-bottom:12px}
+.desktop-mode .keyboard{height:210px}
+.desktop-mode .key-label{font-size:9px}
+.desktop-mode .black .key-label{font-size:8px}
+.desktop-mode .settings-card{margin-top:12px;padding:14px}
+.desktop-mode .help-card{font-size:10px;padding:13px}
+.desktop-mode .desktop-only-note{display:block;color:#8191ac;font-size:10px;margin-top:8px}
+.desktop-mode .footer-note{font-size:9px}
+@media(max-width:900px){#frame.desktop-mode .workspace{grid-template-columns:minmax(0,1fr) minmax(300px,38%)}}
+@media(max-width:720px){#frame.desktop-mode{padding:10px}#frame.desktop-mode .workspace{grid-template-columns:1fr}#frame.desktop-mode .side-column{position:static}#frame.desktop-mode .keyboard{height:160px}}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* Two-screen navigation: library/settings first, performance-only workspace second. */
+[hidden]{display:none !important}
+#frame{min-height:100svh}
+#homeScreen{min-height:calc(100svh - 24px)}
+.home-content{display:flex;flex-direction:column;gap:10px}
+.home-left,.home-right{min-width:0}
+.home-lead{color:#9baac1;font-size:10px;line-height:1.5;margin:0 2px 10px}
+.home-start{width:100%;padding:13px 14px;font-size:12px;border-radius:12px;margin-top:10px}
+.song-actions{align-items:center}
+#playScreen{display:flex;flex-direction:column;gap:8px;min-height:calc(100svh - 20px);padding-bottom:env(safe-area-inset-bottom)}
+.play-topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px;flex-shrink:0}
+.back-button{padding:8px 10px;white-space:nowrap}
+.play-song-name{min-width:0;flex:1;text-align:center;font-size:11px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8d092}
+.play-mode-name{font-size:8px;color:#94a3bc;letter-spacing:.1em;white-space:nowrap}
+#playScoreCard{padding:8px 8px 9px;min-width:0;flex:0 0 auto}
+#playScoreCard .score-top{padding-bottom:6px}
+#playScoreCard #scoreCanvas{height:clamp(205px,36svh,315px)}
+#playScoreCard .score-legend{padding:5px 3px 0;font-size:8px}
+#playScoreCard .feedback-row{margin-top:7px;grid-template-columns:minmax(0,1fr) 76px;gap:6px}
+#playScoreCard .feedback{min-height:43px;padding:6px 8px;gap:2px}
+#playScoreCard .feedback strong{font-size:11px}
+#playScoreCard .feedback span{font-size:8px}
+#playScoreCard .next-note{padding:5px 4px}
+#playScoreCard .next-note .note-big{font-size:18px}
+#playScoreCard .next-note small{font-size:7px;margin-top:2px}
+#playScoreCard .metrics{display:none;margin-top:6px;gap:5px}
+#playScoreCard .metric{padding:5px 7px}
+#playScoreCard .metric .v{font-size:12px}
+#playScoreCard .metric .k{font-size:7px}
+#playScoreCard .progress-track{margin-top:6px}
+#playKeyboardCard{padding:8px 8px 9px;flex:0 0 auto}
+#playKeyboardCard .keyboard-head{margin:0 2px 6px}
+#playKeyboardCard .keyboard-head strong{font-size:9px}
+#playKeyboardCard .keyboard-head span{font-size:7px}
+#playKeyboardCard .keyboard{height:clamp(132px,20svh,178px)}
+#playKeyboardCard .computer-hint{display:none;font-size:7px;margin-top:5px}
+.play-controls{display:flex;gap:7px;flex-shrink:0}
+.play-controls .btn{flex:1;padding:10px;font-size:10px}
+.play-controls .btn.primary{flex:1.6}
+.play-footnote{font-size:8px;color:#73839d;text-align:center;line-height:1.35;padding:0 8px 3px}
+@media(max-height:720px) and (max-width:600px){
+ #frame{padding-top:7px;padding-bottom:8px}
+ #playScreen{gap:6px}
+ #playScoreCard #scoreCanvas{height:clamp(175px,32svh,235px)}
+ #playKeyboardCard .keyboard{height:clamp(112px,18svh,135px)}
+ #playKeyboardCard .computer-hint{display:none}
+ #playScoreCard .metrics{display:none}
+}
+#frame.desktop-mode{max-width:1180px;min-height:100vh;padding:18px 22px}
+#frame.desktop-mode #homeScreen{min-height:calc(100vh - 36px)}
+#frame.desktop-mode .home-content{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);align-items:start;gap:16px}
+#frame.desktop-mode .song-card{padding:16px}
+#frame.desktop-mode .settings-card{margin-top:0;padding:16px}
+#frame.desktop-mode .mode-tabs{margin-bottom:0}
+#frame.desktop-mode #playScreen{min-height:calc(100vh - 36px);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);align-content:start;align-items:start;gap:14px}
+#frame.desktop-mode .play-topbar,#frame.desktop-mode .play-controls,#frame.desktop-mode .play-footnote{grid-column:1/-1}
+#frame.desktop-mode #playScoreCard #scoreCanvas{height:min(42vh,390px)}
+#frame.desktop-mode #playScoreCard .metrics{display:grid}
+#frame.desktop-mode #playKeyboardCard .keyboard{height:230px}
+#frame.desktop-mode #playKeyboardCard .computer-hint{display:block;font-size:9px}
+@media(max-width:760px){
+ #frame.desktop-mode{padding:10px}
+ #frame.desktop-mode .home-content{grid-template-columns:1fr}
+ #frame.desktop-mode #playScreen{display:flex;min-height:calc(100svh - 20px)}
+ #frame.desktop-mode #playScoreCard #scoreCanvas{height:clamp(205px,36svh,315px)}
+ #frame.desktop-mode #playKeyboardCard .keyboard{height:clamp(132px,20svh,178px)}
+}
+
+
+.song-source-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;font-size:8px;line-height:1.35}
+.song-source-row a{color:#75d6e5;font-weight:850;letter-spacing:.06em;text-decoration:none;white-space:nowrap}
+.song-source-row span{color:#8394af;text-align:right}
+@media (max-width:1100px) and (orientation:landscape){
+ body{overflow:hidden}
+ #frame.mobile-mode:not(.desktop-mode){width:100vw;max-width:none;height:100dvh;min-height:100dvh;overflow:hidden;margin:0;padding:6px 9px 7px}
+ #frame.mobile-mode:not(.desktop-mode) .topbar{min-height:30px;margin-bottom:6px}
+ #frame.mobile-mode:not(.desktop-mode) .brand-mark{width:28px;height:28px;border-radius:8px}
+ #frame.mobile-mode:not(.desktop-mode) .home-content{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(270px,.94fr);gap:10px;align-items:start}
+ #frame.mobile-mode:not(.desktop-mode) .home-lead{display:none}
+ #frame.mobile-mode:not(.desktop-mode) .song-card{padding:8px 10px;margin-bottom:7px}
+ #frame.mobile-mode:not(.desktop-mode) .settings-card{margin:0;padding:8px 10px}
+ #frame.mobile-mode:not(.desktop-mode) .help-card{margin-top:7px;padding:7px 9px;font-size:8px}
+ #frame.mobile-mode:not(.desktop-mode) .footer-note{padding-top:5px;font-size:7px}
+ #frame.mobile-mode:not(.desktop-mode) #homeScreen{min-height:0}
+ #frame.mobile-mode:not(.desktop-mode) #playScreen{height:calc(100dvh - 13px);min-height:0;gap:5px;padding-bottom:env(safe-area-inset-bottom);overflow:hidden}
+ #frame.mobile-mode:not(.desktop-mode) .play-topbar{min-height:28px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard{flex:1 1 auto;min-height:0;padding:5px 7px;display:flex;flex-direction:column}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .score-top{padding-bottom:3px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard #scoreCanvas{height:clamp(95px,28svh,125px);flex:1 1 auto;min-height:95px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .score-legend{padding:3px 3px 0}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .feedback-row{margin-top:4px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .feedback{min-height:34px;padding:4px 6px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .feedback span{font-size:7px}
+ #frame.mobile-mode:not(.desktop-mode) #playKeyboardCard{padding:5px 7px 6px}
+ #frame.mobile-mode:not(.desktop-mode) #playKeyboardCard .keyboard-head{margin-bottom:3px}
+ #frame.mobile-mode:not(.desktop-mode) #playKeyboardCard .keyboard{height:clamp(74px,21svh,94px)}
+ #frame.mobile-mode:not(.desktop-mode) .play-controls{gap:5px}
+ #frame.mobile-mode:not(.desktop-mode) .play-controls .btn{padding:7px;font-size:9px}
+ #frame.mobile-mode:not(.desktop-mode) .play-footnote{font-size:7px;padding-bottom:0}
+}
+/* A mobile browser cannot change the physical screen orientation with CSS.
+   Never rotate a portrait page 90 degrees: that makes the piano run vertically.
+   Instead, ask Android for a real landscape lock on the user's Start tap. If the
+   browser does not support that API (or the page is not fullscreen), show a clear
+   rotate-device prompt until the physical viewport becomes landscape. */
+.orientation-prompt{display:none}
+@media (max-width:1100px) and (orientation:portrait){
+ html,body{width:100%;min-height:100%;overflow-x:hidden}
+ #frame.mobile-mode:not(.desktop-mode){position:relative;left:auto;top:auto;width:100%;max-width:430px;height:auto;min-height:100svh;overflow:visible;margin:0 auto;padding:12px 12px 18px;transform:none}
+ #frame.mobile-mode:not(.desktop-mode) .topbar{min-height:38px}
+ #frame.mobile-mode:not(.desktop-mode) .home-content{display:flex;flex-direction:column;gap:0}
+ #frame.mobile-mode:not(.desktop-mode) #homeScreen{min-height:100svh}
+ #frame.mobile-mode:not(.desktop-mode).portrait-play #orientationPrompt{display:grid}
+}
+.orientation-prompt{position:fixed;inset:0;z-index:9999;place-items:center;padding:22px;background:radial-gradient(ellipse at 50% 20%,#24385e 0%,#0a1020 70%);text-align:center}
+.orientation-panel{width:min(360px,100%);padding:25px 22px;border:1px solid #3b4e70;border-radius:20px;background:linear-gradient(155deg,#192842,#0e1729);box-shadow:0 18px 60px #0009}
+.orientation-glyph{font-size:44px;line-height:1;margin-bottom:15px;color:#f4ce7a}
+.orientation-panel h2{font-size:18px;margin:0 0 9px;color:#f2f5fb}
+.orientation-panel p{font-size:12px;line-height:1.55;color:#aab8ce;margin:0}
+.orientation-panel .btn{margin-top:17px;min-width:130px}
+@media (max-width:1100px) and (orientation:landscape){
+ body{overflow:hidden}
+ #frame.mobile-mode:not(.desktop-mode){position:relative;width:100vw;max-width:none;height:100dvh;min-height:100dvh;overflow:hidden;margin:0;padding:6px 9px 7px;transform:none}
+ #frame.mobile-mode:not(.desktop-mode) .topbar{min-height:30px;margin-bottom:6px}
+ #frame.mobile-mode:not(.desktop-mode) .brand-mark{width:28px;height:28px;border-radius:8px}
+ #frame.mobile-mode:not(.desktop-mode) .home-content{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(270px,.94fr);gap:10px;align-items:start}
+ #frame.mobile-mode:not(.desktop-mode) .home-lead{display:none}
+ #frame.mobile-mode:not(.desktop-mode) .song-card{padding:8px 10px;margin-bottom:7px}
+ #frame.mobile-mode:not(.desktop-mode) .settings-card{margin:0;padding:8px 10px}
+ #frame.mobile-mode:not(.desktop-mode) .help-card{margin-top:7px;padding:7px 9px;font-size:8px}
+ #frame.mobile-mode:not(.desktop-mode) .footer-note{padding-top:5px;font-size:7px}
+ #frame.mobile-mode:not(.desktop-mode) #homeScreen{min-height:0}
+ #frame.mobile-mode:not(.desktop-mode) #playScreen{height:calc(100dvh - 13px);min-height:0;gap:5px;padding-bottom:env(safe-area-inset-bottom);overflow:hidden}
+ #frame.mobile-mode:not(.desktop-mode) .play-topbar{min-height:28px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard{flex:1 1 auto;min-height:0;padding:5px 7px;display:flex;flex-direction:column}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .score-top{padding-bottom:3px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard #scoreCanvas{height:clamp(95px,28svh,125px);flex:1 1 auto;min-height:95px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .score-legend{padding:3px 3px 0}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .feedback-row{margin-top:4px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .feedback{min-height:34px;padding:4px 6px}
+ #frame.mobile-mode:not(.desktop-mode) #playScoreCard .feedback span{font-size:7px}
+ #frame.mobile-mode:not(.desktop-mode) #playKeyboardCard{padding:5px 7px 6px}
+ #frame.mobile-mode:not(.desktop-mode) #playKeyboardCard .keyboard-head{margin-bottom:3px}
+ #frame.mobile-mode:not(.desktop-mode) #playKeyboardCard .keyboard{height:clamp(74px,21svh,94px)}
+ #frame.mobile-mode:not(.desktop-mode) .play-controls{gap:5px}
+ #frame.mobile-mode:not(.desktop-mode) .play-controls .btn{padding:7px;font-size:9px}
+ #frame.mobile-mode:not(.desktop-mode) .play-footnote{font-size:7px;padding-bottom:0}
+}
+
+
+
+/* Larger home-screen touch targets for phones; no selectors below touch the play area. */
+#homeScreen .mode-switch button{min-height:40px;padding:8px 10px;touch-action:manipulation}
+#homeScreen #importBtn{min-height:42px;min-width:68px;touch-action:manipulation}
+#homeScreen select{min-height:42px}
+#homeScreen .library-search{min-height:42px}
+#homeScreen .library-filter-row .btn{min-height:42px;padding:8px 5px;touch-action:manipulation}
+#homeScreen .favorite-btn{min-height:42px;touch-action:manipulation}
+#homeScreen .mode-tabs button{min-height:42px;touch-action:manipulation}
+#homeScreen input[type=range]{height:30px;touch-action:pan-x}
+#homeScreen .checkline{min-height:34px}
+#homeScreen .checkline input{width:18px;height:18px;flex:0 0 18px}
+@media(max-width:1100px) and (orientation:landscape){
+ #homeScreen .library-search{min-height:42px;padding:8px 10px}
+ #homeScreen .library-filter-row .btn{min-height:42px;padding:8px 5px}
+ #homeScreen .favorite-row{margin-top:6px}
+}
+
+/* Activity and harmonic interval setup (home screen only; play viewport unchanged). */
+.activity-tabs{display:flex;gap:5px;margin:0 0 9px;padding:4px;background:#0d1627;border:1px solid #24334e;border-radius:12px}
+.activity-tabs button{flex:1;min-width:0;min-height:42px;border:0;background:transparent;color:#92a0b7;border-radius:8px;padding:8px 6px;font-size:10px;font-weight:850;letter-spacing:.35px;touch-action:manipulation}
+.activity-tabs button.active{background:#263754;color:#f5d487;box-shadow:inset 0 0 0 1px #576b8d}
+.interval-setup{padding:13px;display:grid;gap:10px}
+.interval-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.interval-options select{width:100%;min-height:42px;border:1px solid #34445f;border-radius:9px;background:#0c1424;color:#f1f5ff;padding:8px;font:600 12px system-ui}
+.interval-help{margin:0;color:#9aabc4;font-size:10px;line-height:1.5}
+@media(max-width:420px){.activity-tabs button{font-size:9px}.interval-options{grid-template-columns:1fr 1fr}}
+
+/* Library quality-of-life tools (home screen only; gameplay score/keyboard unchanged). */
+.library-tools{display:grid;gap:7px;margin-top:10px}
+.library-search{width:100%;min-height:40px;padding:9px 11px;border:1px solid #34445f;border-radius:10px;background:#0c1424;color:#f1f5ff;font-size:12px;outline:none}
+.library-search::placeholder{color:#7e8da7}
+.library-filter-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.library-filter-row .btn{min-height:34px;padding:7px 5px;font-size:9px}
+.library-filter-row .btn.active{background:#293a58;color:#f4d485;border-color:#667c9f;box-shadow:inset 0 0 0 1px #566b8a}
+.favorite-row{display:flex;justify-content:flex-end;margin-top:7px}
+.favorite-btn{min-height:34px;min-width:132px;color:#f2d38b;border-color:#695936;background:#302a1e}
+.favorite-btn[aria-pressed="true"]{color:#1c2331;background:#f2d38b;border-color:#f2d38b}
+.library-status{min-height:12px;color:#8191aa;font-size:8px;line-height:1.35;margin-top:1px}
+@media(max-width:1100px) and (orientation:landscape){
+ #frame.mobile-mode:not(.desktop-mode) .library-tools{gap:5px;margin-top:7px}
+ #frame.mobile-mode:not(.desktop-mode) .favorite-row{margin-top:5px}
+}
+
+</style>
+</head>
+<body>
+<div id="frame" class="mobile-mode">
+  <section id="homeScreen" aria-label="Song library and settings">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">♪</div><div><div class="brand-name">CLASSIC KEYS</div><div class="brand-sub">PIANO PRACTICE STUDIO</div></div></div>
+      <div class="mode-switch" aria-label="Screen layout"><button id="mobileMode" class="active" aria-pressed="true">MOBILE</button><button id="desktopMode" aria-pressed="false">DESKTOP</button></div>
+    </header>
+    <div class="home-content">
+      <div class="home-left">
+        <p class="home-lead">Choose a score-referenced melody excerpt and set up your practice. Mobile mode is landscape-first: turn your phone sideways so all 24 keys fit along the wide edge.</p>
+        <div class="activity-tabs" role="group" aria-label="Practice activity">
+          <button type="button" id="songActivityTab" class="active" aria-pressed="true">♫ SONGS</button>
+          <button type="button" id="intervalActivityTab" aria-pressed="false">↔ HARMONIC INTERVALS</button>
+        </div>
+        <section class="song-card" id="songCard">
+          <div class="song-row">
+            <div class="select-wrap"><div class="eyebrow" id="libraryCount">Classical song library · 40 pieces</div><select id="songSelect" aria-label="Choose a classical piece"></select></div>
+            <button class="btn small" id="importBtn" title="Import a song JSON file">＋ SONG</button>
+            <input id="songFile" type="file" accept=".json,application/json">
+          </div>
+          <div class="library-tools">
+            <input class="library-search" id="songSearch" type="search" autocomplete="off" placeholder="Search titles, composers, or keys…" aria-label="Search songs by title, composer, or key">
+            <div class="library-filter-row" role="group" aria-label="Filter song library">
+              <button type="button" class="btn active" id="filterAll" data-filter="all" aria-pressed="true">ALL SONGS</button>
+              <button type="button" class="btn" id="filterFavorites" data-filter="favorites" aria-pressed="false">★ FAVORITES</button>
+              <button type="button" class="btn" id="filterRecent" data-filter="recent" aria-pressed="false">◷ RECENT</button>
+            </div>
+            <div class="library-status" id="libraryStatus" aria-live="polite">40 pieces · your settings save automatically</div>
+          </div>
+          <div class="song-info"><div style="min-width:0"><div class="song-title" id="songTitle">Für Elise, WoO 59 · opening</div><div class="song-composer" id="songComposer">Ludwig van Beethoven · A minor</div></div><div class="length-pill" id="songLength">~36 sec</div></div>
+          <div class="favorite-row"><button type="button" class="btn favorite-btn" id="favoriteBtn" aria-pressed="false">☆ ADD FAVORITE</button></div>
+          <div class="song-source-row" id="songSourceRow" hidden><a id="songSource" target="_blank" rel="noopener noreferrer">OPEN SCORE REFERENCE ↗</a><span id="songAuditTag"></span></div>
+          <button class="btn primary home-start" id="enterPlayBtn">▶ START PRACTICE</button>
+        </section>
+        <section class="song-card interval-setup" id="intervalSetup" hidden>
+          <div class="song-info"><div><div class="song-title">Harmonic interval practice</div><div class="song-composer">Play two notes together as one sound. Both notes are shown vertically on the staff.</div></div><div class="length-pill">2 notes</div></div>
+          <div class="interval-options">
+            <label class="setting"><span>INTERVAL SET</span><select id="intervalSet"><option value="all">All intervals · m2 to octave</option><option value="steps">Seconds and thirds</option><option value="consonant">Consonant intervals</option><option value="challenge">Tritone and sevenths</option></select></label>
+            <label class="setting"><span>LOWER NOTE</span><select id="intervalRoot"><option value="mixed">Rotate C4–B4</option><option value="C4">C4</option><option value="D4">D4</option><option value="E4">E4</option><option value="F4">F4</option><option value="G4">G4</option><option value="A4">A4</option><option value="B4">B4</option></select></label>
+          </div>
+          <p class="interval-help">Timed mode: strike both keys close together when the chord reaches the gold line. At Your Own Pace: play both keys within a 220 ms two-note capture window; the next interval waits until both are correct. Touch two keys with two fingers, or press two computer-mapped keys together.</p>
+          <button class="btn primary home-start" id="enterIntervalBtn">▶ START INTERVAL PRACTICE</button>
+        </section>
+        <div class="mode-tabs" aria-label="Practice mode"><button id="timedTab" class="active">⏱ PLAY IN TIME</button><button id="practiceTab">◎ AT YOUR OWN PACE</button></div>
+      </div>
+      <div class="home-right">
+        <section class="settings-card">
+          <div class="settings-title"><strong>PLAYBACK SETTINGS</strong><span>Auto-saved · tempo and visual speed are independent</span></div>
+          <div class="setting-grid">
+            <div class="setting"><label for="tempo"><span>SONG TEMPO</span><output id="tempoOut">100% · 105 BPM</output></label><input type="range" id="tempo" min="25" max="150" value="100" step="5"><small class="setting-hint">25% = one-quarter of this song’s default study tempo</small></div>
+            <div class="setting"><label for="scroll"><span>SCROLL SPEED</span><output id="scrollOut">1.0×</output></label><input type="range" id="scroll" min="0.5" max="2.5" value="1" step="0.1"></div>
+            <div class="setting"><label for="volume"><span>MASTER VOLUME</span><output id="volumeOut">70%</output></label><input type="range" id="volume" min="0" max="100" value="70" step="1"></div>
+            <div class="setting"><label for="tolerance"><span>HIT WINDOW</span><output id="toleranceOut">±220 ms</output></label><input type="range" id="tolerance" min="100" max="400" value="220" step="10"></div>
+            <label class="checkline"><input type="checkbox" id="backingToggle" checked> Play generated piano backing (bass + chords)</label>
+            <label class="checkline"><input type="checkbox" id="notationColorToggle"> Color notation by key type <small class="color-key-hint">WHITE KEYS · LILAC &nbsp; BLACK KEYS · CYAN</small></label>
+            <label class="checkline"><input type="checkbox" id="hapticsToggle"> Haptic feedback on correct / missed notes (supported phones)</label>
+          </div>
+        </section>
+        <section class="help-card"><b>HOW TO PLAY</b><br>In <b>Play in Time</b>, hit the note when its head reaches the gold line. In <b>At Your Own Pace</b>, the score waits for the correct key and advances immediately. The active library contains score-referenced melody studies, not complete piano transcriptions. Pitch spellings and note order are checked against the linked score references. Each song’s audit note identifies octave folding, omitted voices, and timing simplifications. Some excerpts preserve source note values; others use evenly spaced practice durations because the text transcription does not expose every rhythm. Generated backing is a practice aid, not the original accompaniment.</section>
+        <div class="footer-note">40 built-in melody studies, not full piano transcriptions. Each entry includes a source and an audit note that distinguishes score-checked pitches from teaching-arrangement reductions, octave choices and regularized practice rhythms. The tempo slider now ranges from 25% to 150% of each selected piece’s default study tempo, while scroll speed remains independent. Search, favorite, and revisit pieces from the library; settings are saved automatically. Import additional arrangements with ＋ SONG.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="playScreen" hidden aria-label="Piano performance screen">
+    <header class="play-topbar">
+      <button class="btn back-button" id="backHomeBtn">← LIBRARY</button>
+      <div class="play-song-name" id="playSongTitle">Für Elise, WoO 59 · opening</div>
+      <div class="play-mode-name" id="playModeName">PLAY IN TIME</div>
+    </header>
+    <section class="score-card" id="playScoreCard">
+      <div class="score-top"><div class="score-heading">LIVE SCORE · TREBLE STAFF</div><div class="key-meta" id="keyMeta">A MINOR · 4/4</div></div>
+      <canvas id="scoreCanvas" aria-label="Scrolling musical staff with notes to play"></canvas>
+      <div class="score-legend"><span>← NOTES APPROACH THE GOLD HIT LINE</span><span><span id="notationLegend" class="notation-key-legend" hidden><i class="legend-dot white-note-dot"></i>WHITE <i class="legend-dot black-note-dot"></i>BLACK</span><span class="target-label" id="scrollLabel">SCROLL 1.0×</span></span></div>
+      <div class="feedback-row">
+        <div class="feedback" id="feedback"><strong id="feedbackMain">Ready when you are</strong><span id="feedbackSub">Press Start, then play each note as it reaches the line.</span></div>
+        <div class="next-note"><div class="note-big" id="targetNote">—</div><small id="targetCaption">NEXT NOTE</small></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="v" id="scoreValue">0</div><div class="k">SCORE</div></div>
+        <div class="metric"><div class="v" id="accuracyValue">—</div><div class="k">ACCURACY</div></div>
+        <div class="metric"><div class="v" id="comboValue">0</div><div class="k">COMBO</div></div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </section>
+    <section class="keyboard-card" id="playKeyboardCard">
+      <div class="keyboard-head"><strong>24-KEY PIANO</strong><span>C4 — B5 · TWO OCTAVES</span></div>
+      <div class="keyboard" id="keyboard" aria-label="Clickable two-octave piano keyboard"><div class="white-keys" id="whiteKeys"></div></div>
+      <div class="computer-hint">CLICK / TAP KEYS · COMPUTER MAP: A W S E D F T G Y H U J K O L P ; ' Z X C V B N</div>
+    </section>
+    <div class="play-controls">
+      <button class="btn primary" id="startBtn">▶ START SONG</button>
+      <button class="btn" id="resetBtn">↺ RESET</button>
+    </div>
+    <div class="play-footnote">Tap the keys or use your computer mapping · return to Library for settings</div>
+  </section>
+  <div id="orientationPrompt" class="orientation-prompt" role="dialog" aria-modal="true" aria-labelledby="orientationTitle">
+    <div class="orientation-panel">
+      <div class="orientation-glyph" aria-hidden="true">↻</div>
+      <h2 id="orientationTitle">Turn your phone sideways</h2>
+      <p>The piano needs a real landscape screen. Rotate your phone so the 24 keys run left-to-right along the wide edge. The app will not turn the page sideways inside a portrait screen.</p>
+      <button class="btn primary" id="orientationBackBtn">← BACK TO LIBRARY</button>
+    </div>
+  </div>
+</div>
+<script>
+/*
+  CLASSIC KEYS — single-file piano practice app · score audit + mobile library tools · quarter-speed tempo control
+  Song module format: {id, title, composer, key, tonic, mode, bpm, meter, barBeats, phrase, rhythm, chords, source, auditNote}.
+  Harmonic interval activity creates two-note events (`midis` / `names`) and uses the same score + keyboard view.
+  `phrase` is a sequence of pitches in C4–B5. `rhythm` is optional quarter-note beat lengths
+  (1 = quarter, .5 = eighth, .25 = sixteenth, 2 = half, 1.5 = dotted quarter).
+  Each arrangement is a compact single-line study reduction, not a complete multi-staff edition.
+*/
+function scoreSong(spec){
+ const bars=spec.bars||[];
+ const phrase=bars.flat().join(' ');
+ const rhythm=spec.rhythm||bars.flatMap(bar=>Array(bar.length).fill((Number(spec.barBeats)||4)/bar.length));
+ const {bars:omitBars,rhythm:omitRhythm,...meta}=spec;
+ return {...meta,phrase,rhythm};
+}
+
+const SONGS = [
+ {id:'fur-elise',title:'Für Elise, WoO 59 · opening',composer:'Ludwig van Beethoven',key:'A minor',tonic:'A',mode:'minor',bpm:100,meter:'3/8',barBeats:1.5,rhythm:[.5,.5,.5,.5,.5,.5,.5,.5,1],phrase:'E5 D#5 E5 D#5 E5 B4 D5 C5 A4',auditNote:'The nine opening melody pitches match the engraved score. The opening eighth-note figure and longer A4 are retained; the left-hand accompaniment is omitted.',source:'https://piano.org/songs/fur-elise/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,5,4,0]},
+ scoreSong({id:'k545',title:'Piano Sonata No. 16, K. 545 · I. Allegro',composer:'Wolfgang Amadeus Mozart',key:'C major',tonic:'C',mode:'major',bpm:108,meter:'4/4',barBeats:4,bars:[['C5','E5','G5'],['B4','C5','D5','C5'],['A5','G5','C5'],['G5','F5','E5','F5','E5']],auditNote:'The first four right-hand bars follow the score bar-by-bar: C5 E5 G5 | B4 C5 D5 C5 | A5 G5 C6 | G5 F5 E5 F5 E5. The original C6 is lowered exactly one octave to C5 to fit the keyboard. Note values are evenly distributed within each source bar because this text transcription provides pitch and bar divisions but not every duration; Alberti bass is omitted.',source:'https://piano.org/songs/mozart-sonata-k545/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,4,5,0]}),
+ {id:'turkish-march',title:'Rondo alla Turca (Turkish March), K. 331 · A-minor refrain',composer:'Wolfgang Amadeus Mozart',key:'A minor',tonic:'A',mode:'minor',bpm:126,meter:'2/4',barBeats:2,rhythm:Array(78).fill(32/78),phrase:'B4 A4 G#4 A4 C5 D5 C5 B4 C5 E5 F5 E5 D#5 E5 B5 A5 G#5 A5 B5 A5 G#5 A5 C5 A5 C5 B5 A5 G5 A5 B5 A5 G5 A5 B5 A5 G5 F#5 E5 E5 F5 G5 G5 A5 G5 F5 E5 D5 E5 F5 G5 G5 A5 G5 F5 E5 D5 C5 D5 E5 E5 F5 E5 D5 C5 B4 C5 D5 E5 E5 F5 E5 D5 C5 B4 B4 A4 G#4 A4',auditNote:'This is the 78-pitch sequence of the opening A-minor refrain (including the pickup) from the score note list; the contrasting middle section is in A major, while the complete sonata is in A major. G♯ and D♯ are retained as written leading-tone accidentals. The score reference identifies a 2/4 refrain and its opening section, but its text extraction does not provide complete note values. For this app, the 78 pitches are evenly distributed over a 16-bar, 32-quarter-beat practice grid so measure spacing stays consistent; this is a regularized timing reduction, not an exact rhythmic transcription. C6 notes are lowered to C5 for the keyboard range; other listed pitches retain their spelling.',source:'https://piano.org/songs/turkish-march-k331/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,4,5,0]},
+ scoreSong({id:'minuet-g',title:'Minuet in G major, BWV Anh. 114',composer:'Christian Petzold',key:'G major',tonic:'G',mode:'major',bpm:104,meter:'3/4',barBeats:3,bars:[['D5','G4','A4','B4','C5'],['D5','G4','G4'],['E5','C5','D5','E5','F#5'],['G5','G4','G4'],['C5','D5','C5','B4','A4'],['B4','C5','B4','A4','G4'],['F#4','G4','A4','B4','G4'],['A4']],auditNote:'The first eight melody bars match the score’s bar-by-bar pitch list, including the one-note bar 8. Attribution is Christian Petzold (BWV Anh. 114), not J. S. Bach. Since the text source gives bar-level pitches but not all note values, notes are evenly distributed inside each 3/4 bar; the left-hand accompaniment is omitted.',source:'https://piano.org/songs/minuet-in-g/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,4,5,0]}),
+ {id:'chopin-nocturne',title:'Nocturne in E-flat major, Op. 9 No. 2 · opening',composer:'Frédéric Chopin',key:'E♭ major',tonic:'Eb',mode:'major',bpm:60,meter:'12/8',barBeats:6,rhythm:Array(9).fill(.5),phrase:'Bb4 G5 G5 F5 G5 F5 Eb5 Bb4 G5',auditNote:'Restricted to the nine-note opening pitch sequence explicitly listed in the source: B♭4–G5–G5–F5–G5–F5–E♭5–B♭4–G5. The source’s later bar-by-bar extraction differs from its opening-note summary, so uncertain continuation pitches have been removed rather than guessed. This short single-line motif is played on an even-eighth practice grid in the work’s 12/8 metre; original ornamentation, durations and accompaniment are not fully represented.',source:'https://piano.org/songs/nocturne-op9-no2/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,5,4,0]},
+ {id:'canon',title:'Canon in D · violin I entry',composer:'Johann Pachelbel',key:'D major',tonic:'D',mode:'major',bpm:56,meter:'4/4',barBeats:4,rhythm:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,...Array(32).fill(.5)],phrase:'F#5 E5 D5 C#5 B4 A4 B4 C#5 D5 C#5 B4 A4 G4 F#4 G4 E4 D4 F#4 A4 G4 F#4 D4 F#4 E4 D4 B4 D4 A4 G4 B4 A4 G4 F#4 D4 E4 C#5 D5 F#5 A5 A4 B4 G4 A4 F#4 D4 D5 D5 C#5',auditNote:'The violin I line from its entry in bar 3 through bars 3–10 is transcribed from the score. B3 is octave-raised to B4 for the keyboard range. The opening four bars retain the score’s quarter-note pulse; later dense bars are simplified to eighth-note steps. Other canon voices and ground bass are omitted.',source:'https://piano.org/songs/canon-in-d/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,5,6,3]},
+ {id:'gymnopedie',title:'Gymnopédie No. 1 · melody entry',composer:'Erik Satie',key:'D major',tonic:'D',mode:'major',bpm:72,meter:'3/4',barBeats:3,phrase:'F#5 A5 G5 F#5 C#5 B4 C#5 D5 A4 F#4 F#5 A5 G5 F#5 C#5 B4 C#5 D5 A4',auditNote:'The score-checked right-hand melody begins at its entry in bar 5; the opening accompaniment-only bars are intentionally skipped. Note pitches follow the score; because no full duration table is supplied, the app uses quarter-note practice steps. The characteristic left-hand chord pattern is omitted.',source:'https://piano.org/songs/gymnopedie-no-1/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,4,5,0]},
+ scoreSong({id:'clair-de-lune',title:'Clair de lune · opening melody, bars 1–16',composer:'Claude Debussy',key:'D♭ major',tonic:'Db',mode:'major',bpm:76,meter:'9/8',barBeats:4.5,bars:[
+  ['Ab5','F5'],['Eb5','F5','Eb5'],['Db5','Eb5','Db5','F5','Db5'],['C5','Db5','C5'],
+  ['Bb4','C5','Bb4','Eb5','Bb4','Ab4','Bb4','Ab4'],['Gb4','Ab4','Gb4','F4'],
+  ['F4','Gb4','F4','Bb4','F4','Eb4','F4','Eb4'],['Db4','Eb4','Db4','C4'],
+  ['Ab4','Ab5','F5'],['Eb5','F5','Eb5'],['Db5','Eb5','Ab5','F5'],['Eb5','F5','Eb5','Db5'],
+  ['Db5','Eb5','Bb5','Ab5','F5'],['F5','Eb5','F5','Eb5','Db5','Bb4'],
+  ['F5','Eb5','Eb5','Eb5','Db5','Db5'],['Db5','C5','C5','C5','Db5','Bb5']
+ ],auditNote:'Rebuilt from the source’s bar-by-bar upper-line pitch list for bars 1–16, rather than its separate “opening notes” paragraph, which conflicts with the bar table. The bar-by-bar list begins A♭5–F5 | E♭5–F5–E♭5. The A♭3 in bar 9 is raised one octave to A♭4; the F6/E♭6/D♭6/C6 notes in bars 15–16 are lowered one octave to fit C4–B5. Other notes retain their listed octave and spelling. The source gives bar groups but not complete individual durations, so each bar is evenly subdivided across its 9/8 measure; the arpeggiated accompaniment is omitted.',source:'https://piano.org/songs/clair-de-lune/',sourceLabel:'OPEN BAR-BY-BAR SCORE ↗',chords:[0,3,4,0]}),
+ scoreSong({id:'swan-lake',title:'Swan Lake · Act II swan theme',composer:'Pyotr Ilyich Tchaikovsky',key:'B minor',tonic:'B',mode:'minor',bpm:88,meter:'4/4',barBeats:4,bars:[['F#5','B4','C#5','D5','E5'],['F#5','D5','F#5','D5'],['F#5','B4','D5','B4','G4','D5'],['B4','E5','D5','C#5'],['F#5','B4','C#5','D5','E5'],['F#5','D5','F#5','D5'],['F#5','B4','D5','B4','G4','D5'],['B4','B4'],['C#5','D5','E5','F#5','G5'],['A5','G5','F#5','G5','A5'],['B5','A5','G5','A5','B5'],['C#5','B5','F#5','D5','C#5','B4'],['C#5','D5','E5','F#5','G5'],['A5','G5','F#5','G5','A5'],['B5','A5','G5','A5','B5']],auditNote:'The 15 melody bars (score bars 2–16) follow the published bar-by-bar list. The original C♯6 at bar 13 is lowered one octave to C♯5; all other note octaves are retained. Since the text source lists pitches/bar divisions rather than complete individual durations, notes are evenly distributed within each 4/4 bar. The opening tremolo accompaniment is omitted.',source:'https://piano.org/songs/swan-lake/',sourceLabel:'OPEN BAR-BY-BAR SCORE ↗',chords:[0,5,4,0]}),
+ {id:'chopin-prelude',title:'Prelude in E minor, Op. 28 No. 4',composer:'Frédéric Chopin',key:'E minor',tonic:'E',mode:'minor',bpm:56,meter:'2/2',barBeats:4,phrase:'B4 B4 B4 C5 B4 C5 B4 C5 B4 Bb4 A4 B4 A4 B4 A4 B4 A4 A4 G#4 G#4 A4 B4 D5 C5 E4 A4 F#4 A4 F#4 A4 G4 F#4 C4 B4 D#4 F#4 D5 C5 B4 B4 C5 B4 C5 B4 C5 B4 A#4 A#4 G5 F#5 E5',auditNote:'The 51-note upper-line pitch list through bar 16 follows the published score transcription. One previously missing A4 in bars 5–8 has been restored. The first B3 is octave-raised to B4, and another B3 later in the excerpt is likewise raised. Note durations are simplified to quarter-note practice steps; the repeated left-hand chord pattern is omitted.',source:'https://piano.org/songs/chopin-prelude-e-minor-op28-no4/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,5,4,0]},
+ scoreSong({id:'funeral-march',title:'Funeral March, Sonata in B-flat minor, Op. 35 · theme',composer:'Frédéric Chopin',key:'B♭ minor',tonic:'Bb',mode:'minor',bpm:54,meter:'4/4',barBeats:4,bars:[['Db4','C4'],['C4','Bb4','Bb4','Bb4','Bb4'],['Db4','Db4','Db4','Db4','F4','Eb4'],['Eb4','Db4','Db4','Db4','Db4'],['Bb4','Ab4','Gb4','F4','F4','Db4'],['Bb4','Ab4','Gb4','F4','F4','Db4'],['Db4','C4'],['C4','Bb4','Bb4','Bb4','Bb4']],auditNote:'Bars 3–10 follow the score’s exact upper-line pitch and bar groups. The original B♭3 notes are raised one octave to B♭4 for the C4–B5 keyboard; C4–D♭4–F4 etc. remain in their original octaves. Notes are evenly spaced within each source bar because the note table does not expose all durations. Left-hand march accompaniment and piano texture are omitted.',source:'https://piano.org/songs/funeral-march/',sourceLabel:'OPEN BAR-BY-BAR SCORE ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'wedding-march',title:'Wedding March, Op. 61 No. 9 · opening fanfare',composer:'Felix Mendelssohn',key:'C major',tonic:'C',mode:'major',bpm:100,meter:'4/4',barBeats:4,bars:[['C4','C4','C4'],['C4','C4','C4','C4'],['C4','C4','C4','C4'],['E4','E4','E4','E4','E4','E4','E4','E4'],['G4','G4','G4','G4','G4','G4','G4','G4'],['C5','B5','F#5'],['A5','G5','F5','D5'],['C5','D5','G4','D5']],auditNote:'Bars 1–8 match the score’s bar-by-bar top-line note list. The source’s C6 at the bar-6 fanfare is lowered exactly one octave to C5 to fit C4–B5. Pitches and bar boundaries are preserved; notes are evenly distributed inside each 4/4 bar because the text source does not expose their full note values. Fanfare texture, left hand and chords are omitted.',source:'https://piano.org/songs/wedding-march/',sourceLabel:'OPEN BAR-BY-BAR SCORE ↗',chords:[0,4,5,0]}),
+ {id:'ode-joy',title:'Ode to Joy · opening theme',composer:'Ludwig van Beethoven',key:'D major',tonic:'D',mode:'major',bpm:92,meter:'4/4',barBeats:4,rhythm:[1,1,1,1,1,1,1,1,1,1,1,1,1.5,.5,2],phrase:'F#4 F#4 G4 A4 A4 G4 F#4 E4 D4 D4 E4 F#4 F#4 E4 E4',auditNote:'Four-bar melody and note lengths transcribed from an ABC score representation in D major. The final bar’s dotted-quarter/eighth/half-note pattern is retained. This is the melody only; accompaniment and later sections are omitted.',source:'https://abcnotation.com/tunePage?a=trillian.mit.edu%2F~jc%2Fmusic%2Fabc%2Fmirror%2Fmindspring.com%2F~thornton.rose%2FOdeToJoy%2F0001',sourceLabel:'OPEN NOTATED SCORE ↗',chords:[0,4,5,0]},
+ {id:'brahms-lullaby',title:'Wiegenlied (Brahms’ Lullaby), Op. 49 No. 4',composer:'Johannes Brahms',key:'D major',tonic:'D',mode:'major',bpm:84,meter:'3/4',barBeats:3,phrase:'F#4 F#4 A4 F#4 F#4 A4 F#4 A4 D5 C#5 B4 B4 A4 E4 F#4',auditNote:'Opening melody pitches through bar 4 are transcribed from the score. The original D-major key and register are retained. Rhythm is simplified to quarter-note practice steps in this melody-only excerpt; piano accompaniment is omitted.',source:'https://piano.org/songs/brahms-lullaby/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,4,5,0]},
+ {id:'ave-maria',title:'Ave Maria, D. 839 · opening vocal line',composer:'Franz Schubert',key:'B♭ major',tonic:'Bb',mode:'major',bpm:52,meter:'4/4',barBeats:4,phrase:'F4 Bb4 D5 Bb4 F4 F4 Bb4 D5 Bb4',auditNote:'Opening nine melody pitches match the score’s original high-voice B-flat-major version. The vocal line is presented as a single-note piano study; because the text reference supplies the opening pitch sequence rather than a complete duration table, spacing is regularized to quarter-note practice steps. Piano accompaniment and the remainder of the song are omitted.',source:'https://piano.org/songs/ave-maria-schubert/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,3,4,0]},
+ {id:'moonlight',title:'Moonlight Sonata, I. Adagio sostenuto · opening triplets',composer:'Ludwig van Beethoven',key:'C♯ minor',tonic:'C#',mode:'minor',bpm:60,meter:'2/2',barBeats:4,rhythm:Array(12).fill(1/3),phrase:'G#4 C#5 E5 G#4 C#5 E5 G#4 C#5 E5 G#4 C#5 E5',auditNote:'The 12-note opening triplet arpeggio cell fills one 2/2 (cut-time) measure (bar 1), equal to four quarter-note beats: four groups of G♯–C♯–E. It is shifted up one octave from the original G♯3–C♯4–E4 pattern to fit C4–B5. This is the accompaniment figure, not the later melody; the original left-hand and full multi-octave texture are not reproduced.',source:'https://piano.org/songs/moonlight-sonata/',sourceLabel:'OPEN PUBLISHED SCORE ↗',chords:[0,5,6,0]},
+ scoreSong({id:'mountain-king',title:'In the Hall of the Mountain King · opening theme',composer:'Edvard Grieg',key:'B minor',tonic:'B',mode:'minor',bpm:138,meter:'4/4',barBeats:4,bars:[['F#4'],['B4','C#5','D5','E5','F#5','D5','F#5'],['E#5','C#5','E#5','E5','C5','E5'],['B4','C#5','D5','E5','F#5','D5','F#5','B5']],auditNote:'The first four score bars match the published note list: held F♯3 | B1 C♯2 D2 E2 F♯2 D2 F♯2 | E♯2 C♯2 E♯2 E2 C2 E2 | B1 C♯2 D2 E2 F♯2 D2 F♯2 B2. The first held F♯3 is raised one octave to F♯4; the following low-register B1–B2 theme notes are raised three octaves to fit C4–B5. The held octave is represented by one pitch. Bar groups are preserved and notes are evenly spaced within each bar; the repeated orchestral bass and crescendo are omitted.',source:'https://piano.org/songs/in-the-hall-of-the-mountain-king/',sourceLabel:'OPEN BAR-BY-BAR SCORE ↗',chords:[0,5,4,0]}),
+// Additional score-audited repertoire (15). Each `bars` array is an explicitly
+ // sourced note group. Where the source provides pitches but not complete note
+ // values, scoreSong uses evenly divided practice durations and auditNote says so.
+ scoreSong({id:'bach-prelude-c-bwv846',title:'Prelude in C major, BWV 846 · opening arpeggio',composer:'Johann Sebastian Bach',key:'C major',tonic:'C',mode:'major',bpm:72,meter:'4/4',barBeats:4,bars:[['G4','C5','E5','G4','C5','E5','G4','C5','E5','G4','C5','E5']],rhythm:Array(12).fill(.25),auditNote:'The 12 displayed upper-line pitches are the score transcription’s opening cell of bar 1 (G–C–E arpeggio pattern). The published score’s complete bar contains 16 sixteenth-note positions; this excerpt intentionally stops after the 12 listed upper-line pitches and uses a one-beat practice rest for the four positions not included in this short note list. It is not a complete transcription of bar 1 or the simultaneous left-hand notes.',source:'https://piano.org/songs/bach-prelude-c-major-bwv846/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'chopin-prelude-c-minor-op28-20',title:'Prelude in C minor, Op. 28 No. 20 · opening',composer:'Frédéric Chopin',key:'C minor',tonic:'C',mode:'minor',bpm:60,meter:'4/4',barBeats:4,bars:[
+  ['G4','Ab4','G4','F4','Eb4'],['Eb4','F4','Eb4','Db4'],['D4','E4','G4','F4','E4'],['D4','G4','B4','Ab4','G4'],
+  ['Eb5','Eb5','D5','D5'],['C5','D5','B4','A4','G4'],['C5','Ab4','G4','F4','Eb4'],['Eb4','F4','Eb4','D4','C4']
+ ],auditNote:'Pitch sequence transcribed bar-by-bar from the published score transcription for bars 1–8. Key signature is C minor (three flats). The reference provides note names but not durations in its text extraction, so each bar is evenly subdivided across 4/4 here; pitches and bar grouping are preserved, while note values are pedagogically regularized.',source:'https://piano.org/songs/chopin-prelude-c-minor-op28-no20/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'chopin-raindrop-prelude',title:'Prelude in D-flat major (Raindrop), Op. 28 No. 15 · melody',composer:'Frédéric Chopin',key:'D♭ major',tonic:'Db',mode:'major',bpm:72,meter:'4/4',barBeats:4,bars:[
+  ['F5','Db5','Ab4','Bb4'],['C5','Db5'],['Eb5','F5','Gb5','F5'],['F5','Eb5','Db5','Eb5','F5','Eb5','D5','Eb5','F5','Gb5'],
+  ['F5','Db5','Ab4','Bb4'],['C5','Db5'],['Eb5','F5','Gb5','F5'],['F5','Eb5','Db5','C5','Db5'],
+  ['Eb5','Eb5','F5'],['Gb5','F5','Eb5','Db5','F5'],['Eb5','Cb5','Bb4','Ab4','Bb4','Bb4','Cb5'],['Ab4','Eb5','Db5','Fb5'],
+  ['Eb5','Eb5','F5'],['Gb5','F5','Eb5','Db5','F5'],['Db5','C5','Bb4','C5','C5','Db5'],['Bb4','F5','Eb5','Gb5']
+ ],auditNote:'Sixteen-bar right-hand melody pitch sequence transcribed from the score note list. Enharmonic spellings C♭ and F♭ are retained as printed. The text source supplies pitches and bar divisions but not every duration, so notes are evenly subdivided within each original bar; the repeated-note accompaniment is omitted.',source:'https://piano.org/songs/chopin-prelude-d-flat-major-op28-no15/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'chopin-ballade-no1',title:'Ballade No. 1 in G minor, Op. 23 · bars 2–5',composer:'Frédéric Chopin',key:'G minor',tonic:'G',mode:'minor',bpm:76,meter:'4/4',barBeats:4,bars:[
+  ['C4','Ab4','Eb4','Bb4','C5','Ab4','Eb5','Bb5'],
+  ['C5','G5','Bb5','Ab5','G5','F#5'],
+  ['F#5','G5','F#5','E#5','F#5','A5','G5','Eb5'],
+  ['Eb5','D5','F5','Eb5','D5','D5']
+ ],auditNote:'The pitch sequence for the score’s bars 2–5 is reproduced from the published note-by-note score transcription. The A♭3 and C6 notes in the source are octave-folded to A♭4 and C5 so every note fits C4–B5; all other listed pitches retain their written octave. Rhythms are evenly subdivided per bar because the text transcription does not expose the original note values.',source:'https://piano.org/songs/chopin-ballade-1-op23/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'chopin-fantaisie-impromptu',title:'Fantaisie-Impromptu, Op. 66 · bars 5–8 melody',composer:'Frédéric Chopin',key:'C♯ minor',tonic:'C#',mode:'minor',bpm:84,meter:'4/4',barBeats:4,bars:[
+  ['G#4','A4','G#4','F##4','G#4','C#5','E5','D#5','C#5','D#5','C#5','B#4','C#5','E5','G#5'],
+  ['G#4','A4','G#4','F##4','G#4','C#5','E5','D#5','C#5','D#5','C#5','B#4','C#5','E5','G#5'],
+  ['A4','C#5','D#5','F#5','A5','C#5','D#5','B5','A5','G#5','F#5','E5','D#5','F#5','C#5'],
+  ['B#4','D#5','A5','G#5','F#5','A5','E5','D#5','F#5','C#5','B#4','D#5','A4','G#4','B4','A4']
+ ],auditNote:'Pitch sequence for bars 5–8 is transcribed from the score’s octave-labelled upper-line note list. In bars 7–8, notes above B5 are folded down exactly one octave (C♯6→C♯5, D♯6→D♯5, B6→B5, etc.); all notes already inside C4–B5 retain their written octave. Double-sharp F𝄪 and B♯ spellings are preserved. This is a single-line right-hand reduction; the original 3-against-4 accompaniment and note-value detail are not reproduced, and notes are evenly spaced within each bar for practice.',source:'https://piano.org/songs/fantaisie-impromptu-op66/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'liszt-hungarian-rhapsody-2',title:'Hungarian Rhapsody No. 2 · bars 10–16',composer:'Franz Liszt',key:'C♯ minor',tonic:'C#',mode:'minor',bpm:72,meter:'2/4',barBeats:2,bars:[
+  ['G#4','G#4'],['C#4','C#4'],['C#4','B#4','C#4','D#4','E4','A4','E4','D#4'],['C#4','C#4','D#4','C#4','B#4'],
+  ['C#4','D#4'],['E4','E4'],['E4','D#4','E4','F#4','G#4','D#4','G#4','F#4']
+ ],auditNote:'Bars 10–16 pitch groups are taken from the score transcription. The source’s G♯3, A3 and B♯3 notes are raised exactly one octave to fit C4–B5; remaining notes keep their written octave and spelling. Original tempo and rubato are simplified; durations are evenly divided within each 2/4 bar.',source:'https://piano.org/songs/hungarian-rhapsody-no-2/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'liszt-la-campanella',title:'La Campanella · bars 5–6',composer:'Franz Liszt',key:'G♯ minor',tonic:'G#',mode:'minor',bpm:112,meter:'6/8',barBeats:3,bars:[
+  ['B5','B5','A#5','G#5','F##5','G#5'],['A#5','D#5','D#5','E5','D#5','C#5']
+ ],auditNote:'Bars 5–6 pitches follow the score’s explicit note list. F𝄪 is retained as a double-sharp in the notation (sounding G natural). This excerpt stays in the original octave and within C4–B5. The note-value grid is regularized to six eighth-note positions per 6/8 bar; Liszt’s articulation and dynamic shaping are not encoded.',source:'https://piano.org/songs/la-campanella/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'liszt-liebestraum-no3',title:'Liebestraum No. 3 · opening upper arpeggio',composer:'Franz Liszt',key:'A♭ major',tonic:'Ab',mode:'major',bpm:112,meter:'6/4',barBeats:6,bars:[['Eb4','Ab4','C5','Ab4','Eb4','Eb4','Ab4','C5','Ab4']],rhythm:Array(9).fill(.5),auditNote:'All nine opening pitches of the right-hand upper arpeggio match the score transcription: E♭4–A♭4–C5–A♭4–E♭4–E♭4–A♭4–C5–A♭4. These are the upper arpeggio notes above the melody, not the main vocal theme. The source specifies eighth notes and 6/4 metre; the excerpt stops after its ninth note and omits the simultaneous lower voice and remaining notes in the bar.',source:'https://piano.org/songs/liebestraum-no-3/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,4,5,0]}),
+ scoreSong({id:'beethoven-moonlight-2',title:'Moonlight Sonata, II. Allegretto · opening melody',composer:'Ludwig van Beethoven',key:'D♭ major',tonic:'Db',mode:'major',bpm:88,meter:'3/4',barBeats:3,bars:[['Db5','C5','Bb4','Eb5','Db5','C5','Bb4','Ab4','Gb5']],rhythm:Array(9).fill(1),leadRest:1,auditNote:'All nine opening right-hand melody pitches match the score transcription for movement II (Allegretto): D♭5–C5–B♭4–E♭5–D♭5–C5–B♭4–A♭4–G♭5. This is a separate movement from the existing Moonlight Sonata I entry. The source identifies a one-beat upbeat and 3/4 metre; the app encodes a one-beat lead-in and regularizes the nine note durations to quarter-note practice beats rather than claiming the original rhythmic detail.',source:'https://piano.org/songs/moonlight-sonata-mvt2/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'beethoven-pathetique-2',title:'Pathétique Sonata, II. Adagio cantabile · opening',composer:'Ludwig van Beethoven',key:'A♭ major',tonic:'Ab',mode:'major',bpm:56,meter:'2/4',barBeats:2,bars:[['C4','Bb4'],['Eb4','Db4'],['C4','Eb4','Ab4','Bb4'],['Eb4']],rhythm:[1,1,1,1,.5,.5,.5,.5,2],auditNote:'The nine-note opening melody pitch sequence and its first four bar divisions match the published score: C4–B♭3 | E♭4–D♭4 | C4–E♭4–A♭4–B♭4 | E♭4. The original B♭3 is raised one octave to B♭4 for the C4–B5 keyboard; other pitches retain their octave. The score is in A♭ major and 2/4. Note lengths are normalized to fit the documented bar divisions; this excerpt stops before the next score note E4.',source:'https://piano.org/songs/pathetique-mvt2/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'tchaikovsky-sugar-plum',title:'Dance of the Sugar Plum Fairy · theme entry',composer:'Pyotr Ilyich Tchaikovsky',key:'E minor',tonic:'E',mode:'minor',bpm:72,meter:'2/4',barBeats:2,bars:[['G4','E4','G4'],['F#4','D#4','E4']],auditNote:'The six pitch classes follow the score’s first theme entry at bar 5: G6–E6–G6–F♯6–D♯6–E6, the top line of the right-hand sixths. The whole line is shifted down exactly two octaves to fit C4–B5. The score’s E-minor key and 2/4 metre are retained; the melody is isolated from the accompanying sixths and its notes are evenly subdivided for practice. The underlying celesta/ballet timbre is represented by the app’s piano sound.',source:'https://piano.org/songs/christmas/dance-of-the-sugar-plum-fairy/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'bach-jesu-joy-hess',title:'Jesu, Joy of Man’s Desiring · Myra Hess piano setting',composer:'Johann Sebastian Bach (arr. Myra Hess)',key:'G major',tonic:'G',mode:'major',bpm:72,meter:'3/4',barBeats:3,bars:[['G4','A4','B4','D5','C5','C5','E5','D5','D5']],rhythm:Array(9).fill(1/3),leadRest:1/3,auditNote:'The opening nine right-hand notes match the 1926 Myra Hess piano arrangement’s score note list: G4–A4–B4–D5–C5–C5–E5–D5–D5. The opening triplet-eighth rest is represented as a one-third-beat lead-in; the following line moves at three notes per beat, matching the score description. This is explicitly the Hess piano setting of Bach’s chorale, not Bach’s original keyboard part. The simultaneous left-hand/chordal writing is omitted. The arrangement has separate copyright status in some countries, so the app contains only this short pitch excerpt.',source:'https://piano.org/songs/jesu-joy-of-mans-desiring-myra-hess/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,4,5,0]}),
+ scoreSong({id:'chopin-minute-waltz',title:'Minute Waltz, Op. 64 No. 1 · opening 16 bars',composer:'Frédéric Chopin',key:'D♭ major',tonic:'Db',mode:'major',bpm:120,meter:'3/4',barBeats:3,bars:[
+  ['Ab4','G4','Ab4','C5','Bb4'],['G4','Ab4','Bb4','Ab4','C5','Bb4'],['G4','Ab4','C5','Bb4','G4','Ab4'],['C5','Bb4','G4','Ab4','C5','Bb4'],
+  ['G4','Ab4','C5','Bb4','G4','Ab4'],['C5','Bb4','G4','Ab4','C5','Bb4'],['G4','Ab4','C5','Bb4','G4','Ab4'],['Bb4','C5','Db5','Eb5','F5','Gb5'],
+  ['Bb5','Ab5','Gb5','F5'],['F5','Eb5','Eb5','D5','Eb5'],['Bb5','Ab5','Gb5','F5'],['F5','Eb5','D5','Eb5','F5','Bb4'],
+  ['G4','Ab4','C5','Bb4','G4','Ab4'],['C5','Bb4','G4','Ab4','C5','Bb4'],['G4','Ab4','C5','Bb4','G4','Ab4'],['Bb4','C5','Db5','Eb5','F5','Gb5']
+ ],auditNote:'The first sixteen bars of the right-hand melody are transcribed note-for-note from the score’s bar-by-bar note list. The pitches and bar boundaries are preserved. The text source does not expose the individual note values, so each bar is evenly subdivided to fill its original 3/4 measure; this is a pitch-faithful melody study, not a full rhythmic transcription or complete piano texture.',source:'https://piano.org/songs/minute-waltz/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'chopin-grande-valse-brillante',title:'Grande Valse Brillante, Op. 18 · opening 16 bars',composer:'Frédéric Chopin',key:'E♭ major',tonic:'Eb',mode:'major',bpm:112,meter:'3/4',barBeats:3,bars:[
+  ['Bb4','Bb4','Bb4'],['Bb4','Bb4','Bb4'],['Bb4','Bb4','Bb4','Bb4'],['Bb4','Bb4','Bb4','Bb4','Bb4'],
+  ['Bb4','D5','Eb5','F5'],['Bb4','Eb5','F5','G5'],['Bb4','F5','G5','Ab5'],['Bb5','Bb5','Bb5'],
+  ['Bb5','C5','Bb5','Ab5'],['Ab5','Bb5','Ab5','G5'],['G5','Ab5','G5','F5'],['F5','G5','F5','Eb5'],
+  ['Bb4','D5','Eb5','F5'],['Bb4','Eb5','F5','G5'],['Bb4','F5','G5','Ab5'],['Bb5','Bb5','Db5','Bb5']
+ ],auditNote:'The first 16 bars’ right-hand melody pitches and bar divisions match the score transcription. The written C6 peak in bar 9 is lowered to C5 to fit C4–B5. Key (E♭ major), 3/4 metre, and the four-bar B♭ call are retained. As the searchable reference supplies pitch names rather than all durations, notes are evenly subdivided inside each bar; the left-hand waltz accompaniment is omitted.',source:'https://piano.org/songs/grande-valse-brillante/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'saint-saens-danse-macabre',title:'Danse macabre, Op. 40 · opening upper line',composer:'Camille Saint-Saëns',key:'G minor',tonic:'G',mode:'minor',bpm:84,meter:'3/4',barBeats:3,bars:[
+  ['C4'],['C4'],['C4'],['C4'],['D5'],['C4'],['C4'],['C4'],['C4'],['C4'],['C4'],['C4'],['F#5']
+ ],rhythm:Array(13).fill(3),auditNote:'The opening upper-staff held-note line for bars 1–13 follows the score transcription: C4 in bars 1–4, D5 in bar 5, C4 in bars 6–12, then F♯5 in bar 13. This is not the famous low-D midnight stroke; it is the separate upper line above it. Each note is held for its 3/4 bar. The orchestral texture and walking bass are omitted.',source:'https://piano.org/songs/danse-macabre/',sourceLabel:'OPEN SCORE NOTE TRANSCRIPTION ↗',chords:[0,5,4,0]}),
+ // Three new additions: note names, octave/register and source bar groups checked
+ // against published engraved score transcriptions. Rhythm is normalized per bar
+ // because their extracted text tables do not expose every individual note value.
+ scoreSong({id:'joplin-entertainer',title:'The Entertainer · introduction, bars 1–4',composer:'Scott Joplin',key:'C major',tonic:'C',mode:'major',bpm:100,meter:'2/4',barBeats:2,bars:[
+  ['D5','E5','C5','A5','B5','G5'],['D5','E5','C5','A4','B4','G4'],['D4','E4','C4'],['G5','D4','D#4']
+ ],auditNote:'The note spellings, octave labels, and four bar groups follow the first-edition 1902 score transcription for bars 1–4. Only D6, E6 and C6 in bar 1 are lowered exactly one octave to D5, E5 and C5 so the entire line fits C4–B5; notes already in range are not shifted. The original introduction doubles notes in octaves, but this is the upper line only. Individual note values are not present in the text note table, so spacing is regularized within each original 2/4 bar; syncopation and octave doubling are not reproduced.',source:'https://piano.org/songs/the-entertainer/',sourceLabel:'OPEN 1902 SCORE & BAR-BY-BAR NOTES ↗',chords:[0,5,4,0]}),
+ scoreSong({id:'joplin-maple-leaf-rag',title:'Maple Leaf Rag · opening strain, bars 1–4',composer:'Scott Joplin',key:'A♭ major',tonic:'Ab',mode:'major',bpm:100,meter:'2/4',barBeats:2,bars:[
+  ['Ab4','Eb5','Ab4','C5','Eb5','G4'],['Eb5','G4','Bb4','Eb5'],['Ab4','Eb5','Ab4','C5','Eb5','G4'],['Eb5','G4','Bb4','Eb5','Eb5']
+ ],auditNote:'The four bar-by-bar pitch groups and octave labels match the right-hand melody list for bars 1–4 in the published 1899 first-edition engraving. A♭ major and 2/4 are retained. The score’s octave doublings are omitted as this is a single-line treble reduction; no pitch is octave-transposed in these four bars. Individual durations are regularized evenly inside each 2/4 bar because the textual score transcription supplies pitches and barlines but not every note value; ragtime syncopation is therefore not represented exactly.',source:'https://piano.org/songs/maple-leaf-rag/',sourceLabel:'OPEN 1899 SCORE & BAR-BY-BAR NOTES ↗',chords:[0,3,4,0]}),
+ scoreSong({id:'chopin-nocturne-b49',title:'Nocturne in C♯ minor, B. 49 · opening melody, bars 1–8',composer:'Frédéric Chopin',key:'C♯ minor',tonic:'C#',mode:'minor',bpm:56,meter:'4/4',barBeats:4,bars:[
+  ['C#5','B4','A4','G#4'],['F##4','G#4'],['C#5','B4','A4','G#4'],['F##4','G#4'],
+  ['G#5','F#5'],['G#5','C#5'],['C#5','B5','C#5','B5','A5'],['A5']
+ ],auditNote:'The first eight right-hand melody bar groups and octave labels match the note-by-note table for Chopin’s Nocturne in C♯ minor, B. 49; key and 4/4 metre are verified against the engraved first-edition score. F𝄪4 is kept with its correct double-sharp spelling (sounding G4). The two C♯6 notes in bar 7 are lowered one octave to C♯5 so the notes fit C4–B5; all other pitches retain their listed octaves. The text extraction does not include individual note values, so durations are evenly distributed within each source bar. This is the right-hand melody only; the broken-chord accompaniment is omitted.',source:'https://piano.org/songs/chopin-nocturne-c-sharp-minor-b49/',sourceLabel:'OPEN ENGRAVED SCORE & BAR-BY-BAR NOTES ↗',chords:[0,5,4,0]}),
+
+ // Five additional score-audited study excerpts. Pitches and source limitations
+ // are documented individually; these are not presented as complete piano scores.
+ {id:'dvorak-humoresque',title:'Humoresque No. 7, Op. 101 · opening motif',composer:'Antonín Dvořák',key:'G♭ major',tonic:'Gb',mode:'major',bpm:72,meter:'2/4',barBeats:2,phrase:'Gb4 Ab4 Gb4 Ab4 Bb4 Db5 Eb5 Db5 Gb4 F4 Ab4 Gb4 F4 Ab4 Gb4 Eb4',rhythm:Array(16).fill(.5),auditNote:'The 16 opening right-hand pitch names and their spellings follow the engraved-score note list: G♭ A♭ G♭ A♭ B♭ D♭ E♭ D♭ G♭ F A♭ G♭ F A♭ G♭ E♭. The source says its transcription was typed twice from the 1894 Simrock-derived print and compared bar by bar. Its text list does not specify octave numbers or individual note values, so this app places the pitches in a playable C4–B5 register (not claiming original octave) and uses even eighth-note practice spacing. G♭ major and 2/4 are retained; the left-hand chords are omitted.',source:'https://clefsight.com/pieces/dvorak-humoresque-op-101-no-7-903a46/note-names',sourceLabel:'OPEN 1894 SCORE NOTE LIST & AUDIT ↗',chords:[0,5,4,0]},
+ {id:'grieg-morning-mood',title:'Morning Mood, from Peer Gynt · opening melody',composer:'Edvard Grieg',key:'E major',tonic:'E',mode:'major',bpm:90,meter:'6/8',barBeats:3,phrase:'B4 G#4 F#4 E4 F#4 G#4 B4 G#4 F#4 E4 F#4 G#4',rhythm:Array(12).fill(.5),auditNote:'The 12 pitch names follow the right-hand opening of the linked shortened C-major piano arrangement (G E D C D E G E D C D E), transposed upward four semitones to the work’s original E-major pitch level: B G♯ F♯ E F♯ G♯ B G♯ F♯ E F♯ G♯. The original orchestral score independently confirms E major, 6/8 and Allegretto pastorale at dotted-quarter = 60 (IMSLP score PDF: https://s9.imslp.org/files/imglnks/usimg/d/de/IMSLP808246-PMLP2533-Peer_Gynt_Suite_No.1_Op.46_Edvard_Grieg.pdf). The accessible arrangement is identified by its publisher as a community piano arrangement not compared bar by bar with a printed edition; therefore this is a source-checked melody reduction, not a claim of independent note-for-note collation against the orchestral autograph. Its note list omits octave labels and individual durations; the app chooses a playable octave and even eighth-note spacing. The original orchestral score’s dotted-quarter marking of 60 is represented as 90 quarter-note BPM in this app’s beat convention. Bass and orchestral texture are omitted.',source:'https://clefsight.com/pieces/grieg-morgenstimmung-bcd42f/note-names',sourceLabel:'OPEN MELODY NOTES & SOURCE AUDIT ↗',chords:[0,4,5,0]},
+ {id:'bach-invention-1-subject',title:'Invention No. 1 in C major, BWV 772 · opening subject',composer:'Johann Sebastian Bach',key:'C major',tonic:'C',mode:'major',bpm:80,meter:'4/4',barBeats:4,leadRest:.25,phrase:'C4 D4 E4 F4 D4 E4 C4',rhythm:Array(7).fill(.25),auditNote:'The seven-note subject C4–D4–E4–F4–D4–E4–C4 is explicitly listed for the opening of BWV 772. The source identifies it as a sixteenth-note motif following a short rest; the app represents that unquantified short rest as one sixteenth-note lead-in. This excerpt stops at the end of the seven-note subject; the following leap, the answering left-hand entry, later imitations, ornaments and the two-part counterpoint are not included. C major and 4/4 are retained. Tempo 80 is the source app’s initial practice tempo, not asserted as Bach’s printed tempo.',source:'https://octotune.com/songs/invention-no-1-in-c-major-bwv-772-bach',sourceLabel:'OPEN OPENING SCORE NOTES & AUDIT ↗',chords:[0,4,5,0]},
+ {id:'mendelssohn-venetian-boat-song',title:'Venetian Boat Song, Op. 30 No. 6 · melody entry',composer:'Felix Mendelssohn',key:'F♯ minor',tonic:'F#',mode:'minor',bpm:88,meter:'6/8',barBeats:3,phrase:'F4 G#4 A4 B4 C#5 C#5 C#5 C#5 C#5 A5 G#5 F#5 E5 D5 C#5 F#4 A4 B4',rhythm:Array(18).fill(.5),auditNote:'The first 15 pitches and octave labels, followed by the first three notes of the next displayed phrase, are taken from the linked medium piano melody reduction. The underlying public-domain source edition is Mendelssohn’s Op. 30 No. 6 in F♯ minor and 6/8; an independent MusicXML/PDF conversion of the Mutopia/1874–77 Breitkopf & Härtel edition reports 575 notes checked against its source. That check validates the source edition, not every note of this separate medium reduction, so this app labels its line as a reduced melody study rather than a full critical transcription. The 18 notes are grouped as three 6/8 study bars with even eighth-note spacing; the left-hand rocking accompaniment, ties, dynamics and rubato are omitted. All listed pitches fit C4–B5 without octave folding. 88 BPM is a practice default, not a claimed composer marking.',source:'https://tuneonmusic.com/music-sheets/letters/venetian-boat-song/',sourceLabel:'OPEN MELODY NOTE LIST ↗',chords:[0,5,4,0]},
+ {id:'schubert-serenade-d957',title:'Serenade (Ständchen), D. 957 No. 4 · melody excerpt',composer:'Franz Schubert',key:'D minor',tonic:'D',mode:'minor',bpm:76,meter:'3/4',barBeats:3,phrase:'A4 Bb4 A4 D5 A4 G4 A4 G4 D5 G4 A4 G4 G4 F4 E4 F4 A4 Bb4 A4 F4 A4 G4 A4 G4',rhythm:Array(24).fill(.5),auditNote:'The first 24 melody pitches come from the linked easy right-hand teaching version, whose note sequence begins E F E A E D E D / A D E D D C B C / E F E C E D E D in A minor. The source explicitly says the original song is in D minor and its easy version has been transposed to A minor; this app transposes that teaching melody up five semitones to restore D minor, yielding A B♭ A D A G A G / D G A G G F E F / A B♭ A F A G A G. Octaves are mapped from the source’s numbered white-key layout, then kept within C4–B5. The app uses an even eighth-note practice grid in 3/4; the exact original vocal durations, accompaniment and expressive phrasing are not reproduced. The original D-minor key is independently confirmed by the Schwanengesang score guide.',source:'https://pianumero.com/song/serenade-schubert',sourceLabel:'OPEN MELODY SEQUENCE & KEY CHECK ↗',chords:[0,5,4,0]}
+];
+
+const $ = id => document.getElementById(id);
+const frame=$('frame'), canvas=$('scoreCanvas'), ctx=canvas.getContext('2d');
+let songs=[...SONGS], song=songs[0], events=[], phraseRests=[], mode='timed', playState='idle', eventIndex=0, beatPosition=0, lastFrame=0, rafId=0;
+let tempo=105, tempoFactor=1, scrollSpeed=1, volume=.7, hitWindow=.22, notationColorMode=false, score=0, hits=0, perfects=0, misses=0, combo=0, bestCombo=0, lastBackingStep=-1;
+let activityType='songs', intervalSet='all', intervalRoot='mixed', intervalPending=new Set(), intervalPendingTimer=0, intervalFirstBeat=0, intervalFirstAt=0;
+const INTERVAL_BASE_BPM=80;
+const INTERVAL_DEFS=[{id:'m2',name:'minor second',semi:1,steps:1},{id:'M2',name:'major second',semi:2,steps:1},{id:'m3',name:'minor third',semi:3,steps:2},{id:'M3',name:'major third',semi:4,steps:2},{id:'P4',name:'perfect fourth',semi:5,steps:3},{id:'A4',name:'augmented fourth / tritone',semi:6,steps:3},{id:'P5',name:'perfect fifth',semi:7,steps:4},{id:'m6',name:'minor sixth',semi:8,steps:5},{id:'M6',name:'major sixth',semi:9,steps:5},{id:'m7',name:'minor seventh',semi:10,steps:6},{id:'M7',name:'major seventh',semi:11,steps:6},{id:'P8',name:'perfect octave',semi:12,steps:7}];
+let audioCtx=null, masterGain=null, keyButtons=new Map(), canvasW=360, canvasH=220, dpr=1;
+let libraryFilter='all', favorites=new Set(), recentSongs=[], hapticsEnabled=false, wakeLock=null;
+const PREFS_KEY='classicKeysPrefsV3';
+const LOW=60,HIGH=83;
+const KEYMAP=['a','w','s','e','d','f','t','g','y','h','u','j','k','o','l','p',';',"'",'z','x','c','v','b','n'];
+const WHITE_MIDI=[60,62,64,65,67,69,71,72,74,76,77,79,81,83];
+const WHITE_LETTERS=['C','D','E','F','G','A','B'];
+const NATURAL_PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+const SHARP_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const FLAT_NAMES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const KEY_SIG={
+ 'C major':0,'G major':1,'D major':2,'A major':3,'E major':4,'B major':5,'F# major':6,'C# major':7,
+ 'F major':-1,'B♭ major':-2,'E♭ major':-3,'A♭ major':-4,'D♭ major':-5,'G♭ major':-6,'C♭ major':-7,
+ 'A minor':0,'E minor':1,'B minor':2,'F# minor':3,'C# minor':4,'G# minor':5,'D# minor':6,'A# minor':7,
+ 'D minor':-1,'G minor':-2,'C minor':-3,'F minor':-4,'B♭ minor':-5,'E♭ minor':-6,'A♭ minor':-7,
+ 'A♭ major':-4,'E♭ major':-3,'D♭ major':-5,
+ 'C♯ minor':4,'F♯ minor':3,'B♭ minor':-5,'C♯ major':7,'F♯ major':6
+};
+function parsePitch(name){
+ const m=String(name).replaceAll('♯','#').replaceAll('♭','b').replaceAll('𝄪','##').replaceAll('𝄫','bb').match(/^([A-G])([#b]{0,2})(-?\d)$/);
+ if(!m) throw new Error('Invalid pitch: '+name);
+ const letter=m[1],acc=m[2],oct=Number(m[3]);
+ const accidentalOffset=acc==='##'?2:acc==='bb'?-2:acc==='#'?1:acc==='b'?-1:0;
+ const midi=(oct+1)*12+NATURAL_PC[letter]+accidentalOffset;
+ return {letter,acc,oct,midi,name:`${letter}${acc}${oct}`};
+}
+function noteLabel(midi, preferFlat=false){const names=preferFlat?FLAT_NAMES:SHARP_NAMES;return names[((midi%12)+12)%12]+(Math.floor(midi/12)-1)}
+function keySigCount(){
+ if(activityType==='intervals')return 0;
+ const raw=String(song.key||'');
+ const normalized=raw.replaceAll('♯','#');
+ return KEY_SIG[raw]??KEY_SIG[normalized]??KEY_SIG[normalized.replaceAll('b','♭')]??0;
+}
+function tonicMidi(octave=3){
+ let p=song.tonic.replace('♭','b').replace('♯','#');
+ return parsePitch(p+octave).midi;
+}
+function buildEvents(){
+ if(activityType==='intervals'){buildIntervalEvents();return;}
+ const phrase=song.phrase.trim().split(/[\s,]+/).filter(Boolean).map(parsePitch);
+ const rhythm=Array.isArray(song.rhythm)?song.rhythm:[];
+ const durations=phrase.map((_,i)=>Math.max(.125,Math.min(8,Number(rhythm[i])||1)));
+ const leadRest=Math.max(0,Number(song.leadRest)||0);
+ const phraseBeats=durations.reduce((a,b)=>a+b,0)+leadRest;
+ const barBeats=Number(song.barBeats)||4;
+ const loopBeats=Math.ceil((phraseBeats-1e-8)/barBeats)*barBeats;
+ const targetBeats=30*tempo/60;
+ const minimumRepeats=Math.max(1,1+Math.ceil(Math.max(0,targetBeats-phraseBeats)/loopBeats));
+ const repeats=Math.max(Number(song.repeats)||1,minimumRepeats);
+ events=[];phraseRests=[];
+ for(let r=0;r<repeats;r++){
+  let localBeat=leadRest;
+  if(leadRest>.001)phraseRests.push({beat:r*loopBeats,dur:leadRest,kind:'lead'});
+  phrase.forEach((p,i)=>{
+   const dur=durations[i],beat=r*loopBeats+localBeat;
+   events.push({midi:p.midi,name:p.name,beat,dur,index:events.length,bar:Math.floor((beat+1e-8)/barBeats)});
+   localBeat+=dur;
+  });
+  const gap=loopBeats-phraseBeats;
+  if(r<repeats-1&&gap>.001)phraseRests.push({beat:r*loopBeats+phraseBeats,dur:gap});
+ }
+}
+function intervalTargetName(rootName,def){
+ const root=parsePitch(rootName),letters=['C','D','E','F','G','A','B'],start=letters.indexOf(root.letter),targetLetter=letters[(start+def.steps)%7],targetOct=root.oct+Math.floor((start+def.steps)/7);
+ const targetMidi=root.midi+def.semi,natural=(targetOct+1)*12+NATURAL_PC[targetLetter],diff=targetMidi-natural;
+ const acc=diff===2?'##':diff===1?'#':diff===-1?'b':diff===-2?'bb':'';
+ return targetLetter+acc+targetOct;
+}
+function buildIntervalEvents(){
+ const sets={all:INTERVAL_DEFS,steps:INTERVAL_DEFS.filter(d=>['m2','M2','m3','M3'].includes(d.id)),consonant:INTERVAL_DEFS.filter(d=>['m3','M3','P4','P5','m6','M6','P8'].includes(d.id)),challenge:INTERVAL_DEFS.filter(d=>['A4','m7','M7'].includes(d.id))};
+ const defs=sets[intervalSet]||sets.all,roots=intervalRoot==='mixed'?['C4','D4','E4','F4','G4','A4','B4']:[intervalRoot];
+ // Shuffle the interval vocabulary, but keep the generated events in ascending
+ // beat order. Rotating event objects after assigning beats made the score jump
+ // forward/backward in time and hid notes from the scrolling notation renderer.
+ const shuffled=[...defs];
+ for(let j=shuffled.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[shuffled[j],shuffled[k]]=[shuffled[k],shuffled[j]];}
+ const sequence=[];
+ for(let i=0;i<48;i++){
+  const def=shuffled[i%shuffled.length],rootName=roots[i%roots.length],upperName=intervalTargetName(rootName,def),a=parsePitch(rootName),b=parsePitch(upperName);
+  if(a.midi<LOW||a.midi>HIGH||b.midi<LOW||b.midi>HIGH)continue;
+  sequence.push({midis:[a.midi,b.midi].sort((x,y)=>x-y),names:[rootName,upperName],label:def.id,intervalName:def.name,beat:sequence.length,dur:1,index:sequence.length,bar:Math.floor(sequence.length/4)});
+ }
+ events=sequence;phraseRests=[];
+}
+function clearIntervalInput(){if(intervalPendingTimer){clearTimeout(intervalPendingTimer);intervalPendingTimer=0;}intervalPending.clear();}
+function intervalDisplay(e){return e?`${e.names[0]} + ${e.names[1]}`:'';}
+function intervalSetTitle(){return ({all:'All intervals',steps:'Seconds and thirds',consonant:'Consonant intervals',challenge:'Tritone and sevenths'})[intervalSet]||'All intervals';}
+function setActivityType(next){
+ if(next!=='songs'&&next!=='intervals')return;
+ activityType=next;
+ $('songCard').hidden=activityType!=='songs';$('intervalSetup').hidden=activityType!=='intervals';
+ $('songActivityTab').classList.toggle('active',activityType==='songs');$('intervalActivityTab').classList.toggle('active',activityType==='intervals');
+ $('songActivityTab').setAttribute('aria-pressed',activityType==='songs'?'true':'false');$('intervalActivityTab').setAttribute('aria-pressed',activityType==='intervals'?'true':'false');
+ tempo=Math.max(1,Math.round((activityType==='songs'?(Number(song.bpm)||105):INTERVAL_BASE_BPM)*tempoFactor));
+ buildEvents();resetGame();updateSongInfo();renderScore();savePreferences();
+}
+
+function renderSongList(){
+ const select=$('songSelect');select.innerHTML='';
+ const count=$('libraryCount');if(count)count.textContent=`Classical song library · ${songs.length} pieces`;
+ const normalizeSearch=value=>String(value||'').toLowerCase().replaceAll('♯','#').replaceAll('♭','b').replaceAll('𝄪','##').replaceAll('𝄫','bb').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+ const query=normalizeSearch($('songSearch')?.value||'');
+ let filtered=songs.filter(s=>normalizeSearch(`${s.title} ${s.composer} ${s.key||''} ${s.meter||''} ${s.id||''}`).includes(query));
+ if(libraryFilter==='favorites')filtered=filtered.filter(s=>favorites.has(s.id));
+ if(libraryFilter==='recent'){
+  const order=new Map(recentSongs.map((id,i)=>[id,i]));
+  filtered=filtered.filter(s=>order.has(s.id)).sort((a,b)=>order.get(a.id)-order.get(b.id));
+ }
+ const addOption=(parent,s)=>{const op=document.createElement('option');op.value=s.id;op.textContent=s.title;parent.appendChild(op)};
+ if(filtered.length){
+  if(libraryFilter==='recent'){
+   const recentGroup=document.createElement('optgroup');recentGroup.label='Recently selected';filtered.forEach(s=>addOption(recentGroup,s));select.appendChild(recentGroup);
+  }else{
+   const groups={};filtered.forEach(s=>(groups[s.composer]??=[]).push(s));
+   Object.entries(groups).forEach(([composer,list])=>{const og=document.createElement('optgroup');og.label=composer;list.forEach(s=>addOption(og,s));select.appendChild(og)});
+  }
+ }else{
+  const empty=document.createElement('option');empty.disabled=true;empty.textContent=libraryFilter==='favorites'?'No favorites yet':'No matching songs';empty.value='';select.appendChild(empty);
+ }
+ select.value=song?.id||'';
+ const status=$('libraryStatus');if(status){
+  const suffix=libraryFilter==='favorites'?'favorites':libraryFilter==='recent'?'recent selections':'songs';
+  status.textContent=`${filtered.length} ${suffix} · ${favorites.size} saved · settings auto-save`;
+ }
+ ['all','favorites','recent'].forEach(f=>{const el=$('filter'+(f==='all'?'All':f==='favorites'?'Favorites':'Recent'));if(el){el.classList.toggle('active',libraryFilter===f);el.setAttribute('aria-pressed',libraryFilter===f?'true':'false')}});
+ updateFavoriteButton();
+}
+function updateFavoriteButton(){
+ const btn=$('favoriteBtn');if(!btn||!song)return;const saved=favorites.has(song.id);
+ btn.textContent=saved?'★ SAVED TO FAVORITES':'☆ ADD FAVORITE';btn.setAttribute('aria-pressed',saved?'true':'false');
+}
+function savePreferences(){
+ try{
+  const prefs={songId:song?.id,mode,activityType,intervalSet,intervalRoot,tempoFactor,scrollSpeed,volumePercent:$('volume')?.value||70,hitWindowMs:$('tolerance')?.value||220,backing:$('backingToggle')?.checked!==false,notationColorMode,hapticsEnabled,layout:frame.classList.contains('desktop-mode')?'desktop':'mobile',favorites:[...favorites],recentSongs:recentSongs.slice(0,8)};
+  localStorage.setItem(PREFS_KEY,JSON.stringify(prefs));
+ }catch(e){}
+}
+function restorePreferences(){
+ let prefs={};try{prefs=JSON.parse(localStorage.getItem(PREFS_KEY)||'{}')||{}}catch(e){}
+ if(prefs.songId){const saved=songs.find(s=>s.id===prefs.songId);if(saved)song=saved;}
+ if(prefs.mode==='timed'||prefs.mode==='practice')mode=prefs.mode;
+ if(prefs.activityType==='songs'||prefs.activityType==='intervals')activityType=prefs.activityType;
+ if(['all','steps','consonant','challenge'].includes(prefs.intervalSet))intervalSet=prefs.intervalSet;
+ if(['mixed','C4','D4','E4','F4','G4','A4','B4'].includes(prefs.intervalRoot))intervalRoot=prefs.intervalRoot;
+ if(Number.isFinite(Number(prefs.tempoFactor)))tempoFactor=Math.max(.25,Math.min(1.5,Number(prefs.tempoFactor)));
+ if(Number.isFinite(Number(prefs.scrollSpeed)))scrollSpeed=Math.max(.5,Math.min(2.5,Number(prefs.scrollSpeed)));
+ if(Number.isFinite(Number(prefs.hitWindowMs)))hitWindow=Math.max(.1,Math.min(.4,Number(prefs.hitWindowMs)/1000));
+ if(prefs.backing!==undefined)$('backingToggle').checked=!!prefs.backing;
+ hapticsEnabled=!!prefs.hapticsEnabled;$('hapticsToggle').checked=hapticsEnabled;
+ notationColorMode=typeof prefs.notationColorMode==='boolean'?prefs.notationColorMode:(()=>{try{return localStorage.getItem('classicKeysNotationColor')==='true'}catch(e){return false}})();
+ $('notationColorToggle').checked=notationColorMode;
+ $('tempo').value=Math.round(tempoFactor*100);$('scroll').value=scrollSpeed;$('volume').value=prefs.volumePercent??70;$('tolerance').value=Math.round(hitWindow*1000);
+ if(prefs.layout==='desktop'){frame.classList.add('desktop-mode');$('desktopMode').classList.add('active');$('mobileMode').classList.remove('active');$('desktopMode').setAttribute('aria-pressed','true');$('mobileMode').setAttribute('aria-pressed','false')}
+ favorites=new Set(Array.isArray(prefs.favorites)?prefs.favorites:[]);
+ recentSongs=Array.isArray(prefs.recentSongs)?prefs.recentSongs.filter(id=>songs.some(s=>s.id===id)).slice(0,8):[];
+ tempo=Math.max(1,Math.round((Number(song?.bpm)||105)*tempoFactor));
+}
+function recordRecentSong(id){recentSongs=[id,...recentSongs.filter(x=>x!==id)].slice(0,8);savePreferences();renderSongList();}
+function setLibraryFilter(filter){libraryFilter=filter;renderSongList();}
+function updateSongInfo(){
+ const totalBeats=events.length?(events[events.length-1].beat+events[events.length-1].dur):0;
+ const totalSeconds=totalBeats*60/tempo;
+ $('songLength').textContent='~'+Math.round(totalSeconds)+' sec';
+ $('tempoOut').textContent=Math.round(tempoFactor*100)+'% · '+tempo+' BPM';$('tempo').value=Math.round(tempoFactor*100);
+ const row=$('songSourceRow');
+ if(activityType==='intervals'){
+  $('songTitle').textContent='Harmonic interval practice';$('songComposer').textContent=intervalSetTitle()+' · two notes together';
+  $('keyMeta').textContent='HARMONIC INTERVALS · 4/4';
+  row.hidden=true;$('songSource').hidden=true;$('songSource').removeAttribute('href');$('songAuditTag').textContent='';
+  return;
+ }
+ $('songTitle').textContent=song.title;$('songComposer').textContent=song.composer+' · '+song.key;
+ $('keyMeta').textContent=song.key.toUpperCase()+' · '+(song.meter||'4/4');
+ if(song.source){row.hidden=false;$('songSource').hidden=false;$('songSource').href=song.source;$('songSource').textContent=song.sourceLabel||'OPEN SCORE REFERENCE ↗';}
+ else {$('songSource').hidden=true;$('songSource').removeAttribute('href');row.hidden=!song.auditNote;}
+ $('songAuditTag').textContent=song.auditNote||'Lead-line study reduction';
+}
+
+function loadSong(id){song=songs.find(s=>s.id===id)||songs[0];setActivityType('songs');tempoFactor=1;tempo=song.bpm||105;buildEvents();resetGame();updateSongInfo();$('playSongTitle').textContent=song.title;recordRecentSong(song.id);savePreferences();renderScore();}
+function resetMetrics(){score=0;hits=0;perfects=0;misses=0;combo=0;bestCombo=0;}
+function resetGame(){clearIntervalInput();playState='idle';eventIndex=0;beatPosition=0;lastFrame=0;lastBackingStep=-1;resetMetrics();if(rafId)cancelAnimationFrame(rafId);rafId=0;updateHUD();setFeedback('Ready when you are',activityType==='intervals'?'Play both notes together when the interval reaches the gold line.':(mode==='timed'?'Press Start, then play each note as it reaches the line.':'Press Start. The next note waits for the correct key.'),'neutral');$('startBtn').textContent=activityType==='intervals'?(mode==='timed'?'▶ START INTERVALS':'▶ START INTERVAL DRILL'):(mode==='timed'?'▶ START SONG':'▶ START PRACTICE');renderScore();}
+function setFeedback(main,sub,tone='neutral'){$('feedback').className='feedback '+tone;$('feedbackMain').textContent=main;$('feedbackSub').textContent=sub;}
+function updateHUD(){
+ $('scoreValue').textContent=score.toLocaleString();
+ const attempted=hits+misses;$('accuracyValue').textContent=attempted?Math.round(hits/attempted*100)+'%':'—';
+ $('comboValue').textContent=combo;
+ $('progressFill').style.width=(events.length?Math.min(100,eventIndex/events.length*100):0)+'%';
+ const e=events[Math.min(eventIndex,events.length-1)];
+ if(e&&e.midis){$('targetNote').textContent=e.label;$('targetCaption').textContent=playState==='complete'?'COMPLETE':intervalDisplay(e);}
+ else {$('targetNote').textContent=e?(noteLabel(e.midi, keySigCount()<0)+''): '✓';$('targetCaption').textContent=playState==='complete'?'COMPLETE':'NEXT NOTE';}
+
+}
+function setMode(next){mode=next;$('timedTab').classList.toggle('active',mode==='timed');$('practiceTab').classList.toggle('active',mode==='practice');$('playModeName').textContent=(activityType==='intervals'?'HARMONIC INTERVALS · ':'')+(mode==='timed'?'PLAY IN TIME':'OWN PACE');resetGame();savePreferences();}
+function getAudio(){
+ if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;audioCtx=new AC();masterGain=audioCtx.createGain();masterGain.gain.value=volume;masterGain.connect(audioCtx.destination);}
+ if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;
+}
+function setVolume(){volume=Number($('volume').value)/100;$('volumeOut').textContent=Math.round(volume*100)+'%';if(masterGain)masterGain.gain.setTargetAtTime(volume,audioCtx.currentTime,.025)}
+function playTone(midi,duration=.42,vel=.23){
+ const ac=getAudio();if(!ac||!masterGain)return;
+ const f=440*Math.pow(2,(midi-69)/12),t=ac.currentTime;
+ const out=ac.createGain();out.gain.setValueAtTime(.0001,t);out.gain.linearRampToValueAtTime(vel,t+.008);out.gain.exponentialRampToValueAtTime(Math.max(.0001,vel*.35),t+Math.min(.16,duration*.5));out.gain.exponentialRampToValueAtTime(.0001,t+duration);out.connect(masterGain);
+ const partials=[[1,'triangle',1],[2.01,'sine',.19],[3.02,'sine',.07]];
+ partials.forEach(([ratio,type,amp])=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f*ratio;g.gain.value=amp;o.connect(g);g.connect(out);o.start(t);o.stop(t+duration+.03)});
+}
+function playUserNote(midi){const target=events[eventIndex];const matches=target&&(target.midi===midi||(target.midis&&target.midis.includes(midi)));const beats=(playState==='running'&&matches)?target.dur:1;playTone(midi,Math.max(.18,Math.min(8,beats*60/tempo*.78)),.31)}
+function playBacking(step){
+ if(activityType==='intervals'||!$('backingToggle').checked)return;
+ const beat=step,barBeats=song.barBeats||4,bar=Math.floor((beat+1e-8)/barBeats),slot=beat-bar*barBeats;
+ const scale=song.mode==='minor'?[0,2,3,5,7,8,10]:[0,2,4,5,7,9,11];
+ const degrees=song.chords||[0,3,4,0],degree=degrees[bar%degrees.length];
+ const root=tonicMidi(3)+scale[degree%7]+(degree>=7?12:0);
+ const triad=[root,root+scale[(degree+2)%7]-scale[degree%7]+(degree+2>=7?12:0),root+scale[(degree+4)%7]-scale[degree%7]+(degree+4>=7?12:0)];
+ const beatSeconds=60/tempo;
+ if(Math.abs(slot)<.03){const dur=Math.min(6,beatSeconds*.88);playTone(root,dur,.12);triad.forEach(n=>playTone(n+12,dur,.055));}
+ else if(Math.abs(slot-Math.round(slot))<.03){playTone(triad[Math.round(slot)%3]+12,Math.min(4,beatSeconds*.42),.04)}
+}
+async function requestScreenWakeLock(){
+ if(!('wakeLock' in navigator)||!navigator.wakeLock?.request)return;
+ try{if(wakeLock&&!wakeLock.released)return;wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null},{once:true});}catch(e){wakeLock=null;}
+}
+function releaseScreenWakeLock(){const lock=wakeLock;wakeLock=null;if(lock){try{lock.release().catch(()=>{})}catch(e){}}}
+function haptic(kind='good'){
+ if(!hapticsEnabled||!navigator.vibrate)return;
+ try{navigator.vibrate(kind==='bad'?26:10)}catch(e){}
+}
+function begin(){
+ getAudio();if(playState==='complete'){eventIndex=0;beatPosition=0;resetMetrics();lastBackingStep=-1;}
+ if(playState==='running'){playState='paused';releaseScreenWakeLock();$('startBtn').textContent='▶ RESUME';if(rafId)cancelAnimationFrame(rafId);rafId=0;setFeedback('Paused','Press Resume to continue.','neutral');return;}
+ if(playState==='idle'||playState==='complete'){beatPosition=mode==='timed'?-(activityType==='intervals'?4:(song.barBeats||4)):0;eventIndex=0;lastBackingStep=-.5;clearIntervalInput();}
+ playState='running';requestScreenWakeLock();lastFrame=performance.now();$('startBtn').textContent='Ⅱ PAUSE';setFeedback(mode==='timed'?'Listen for the beat':'Take your time',activityType==='intervals'?'Play both highlighted notes at the same time.':'Play the highlighted next note.','neutral');
+ if(mode==='timed'&&!events[eventIndex]&&eventIndex>=events.length){playState='complete';return;}
+ if(!rafId)rafId=requestAnimationFrame(tick);
+ renderScore();
+}
+function completeSong(){playState='complete';releaseScreenWakeLock();if(rafId)cancelAnimationFrame(rafId);rafId=0;$('startBtn').textContent='↻ PLAY AGAIN';setFeedback('Piece complete!',`Score ${score.toLocaleString()} · ${perfects} perfect · ${misses} missed`,'good');updateHUD();renderScore();}
+function tick(ts){
+ if(playState!=='running'){rafId=0;return;}
+ const dt=Math.min(.05,Math.max(0,(ts-lastFrame)/1000));lastFrame=ts;
+ if(mode==='timed'){
+  beatPosition+=dt*tempo/60;
+  const windowBeats=hitWindow*tempo/60;
+  while(eventIndex<events.length&&beatPosition>events[eventIndex].beat+windowBeats){clearIntervalInput();misses++;combo=0;eventIndex++;setFeedback('Missed '+(activityType==='intervals'?'interval':'note'), 'Keep going — the next one is coming.','bad');}
+  const backingBeat=Math.floor(beatPosition*2)/2;
+  while(lastBackingStep<backingBeat-.001){lastBackingStep=+(lastBackingStep+.5).toFixed(3);if(lastBackingStep>=0)playBacking(lastBackingStep);}
+  if(eventIndex>=events.length){completeSong();return;}
+ } else {
+  const barBeats=activityType==='intervals'?4:(song.barBeats||4);const bar=Math.floor((events[eventIndex]?.beat||0)/barBeats);
+  if(bar!==lastBackingStep){lastBackingStep=bar;playBacking(bar*barBeats);}
+ }
+ updateHUD();renderScore();rafId=requestAnimationFrame(tick);
+}
+function finishIntervalInput(){
+ if(!intervalPending.size||playState!=='running'||eventIndex>=events.length){clearIntervalInput();return;}
+ const target=events[eventIndex],got=[...intervalPending].sort((a,b)=>a-b),need=(target?.midis||[]).slice().sort((a,b)=>a-b);
+ const complete=got.length===need.length&&need.every(n=>got.includes(n));
+ const firstBeat=intervalFirstBeat,firstAt=intervalFirstAt;
+ clearIntervalInput();
+ if(!complete){haptic('bad');setFeedback('Play both notes',`Required: ${intervalDisplay(target)} (${target.label}). You played ${got.map(n=>noteLabel(n)).join(' + ')}.`, 'bad');return;}
+ if(mode==='timed'){
+  const delta=(firstBeat-target.beat)*60/tempo;
+  if(Math.abs(delta)>hitWindow){haptic('bad');setFeedback(delta<0?'A little early':'A little late',`Play ${target.label} closer to the gold line.`, 'bad');return;}
+  const isPerfect=Math.abs(delta)<=Math.min(.115,hitWindow*.55);
+  score+=isPerfect?100:70;hits++;if(isPerfect)perfects++;combo++;bestCombo=Math.max(bestCombo,combo);eventIndex++;haptic('good');
+  setFeedback(isPerfect?'Perfect interval!':'Good interval',`${target.label} · ${intervalDisplay(target)} · ${Math.round(Math.abs(delta)*1000)} ms ${delta<0?'early':'late'}`,isPerfect?'perfect':'good');
+ }else{
+  score+=100;hits++;perfects++;combo++;bestCombo=Math.max(bestCombo,combo);eventIndex++;haptic('good');
+  setFeedback('Correct · '+target.label,`${target.intervalName} · ${intervalDisplay(target)}. Next interval is ready.`, 'perfect');
+ }
+ if(eventIndex>=events.length){completeSong();return;}
+ updateHUD();renderScore();
+}
+function collectIntervalNote(midi){
+ const target=events[eventIndex];if(!target?.midis)return;
+ if(intervalPending.size===0){intervalFirstBeat=beatPosition;intervalFirstAt=performance.now();intervalPendingTimer=setTimeout(finishIntervalInput,220);}
+ if(intervalPending.has(midi))return;
+ intervalPending.add(midi);
+ if(intervalPending.size>=2)finishIntervalInput();
+ else setFeedback('One note of two',`Add the second note of ${target.label} · ${intervalDisplay(target)}.`, 'neutral');
+}
+function onKey(midi){
+ playUserNote(midi);
+ const b=keyButtons.get(midi);if(b){b.classList.add('pressed');setTimeout(()=>b.classList.remove('pressed'),130)}
+ if(playState!=='running'||eventIndex>=events.length)return;
+ const target=events[eventIndex];
+ if(activityType==='intervals'){collectIntervalNote(midi);return;}
+ if(mode==='practice'){
+  if(midi===target.midi){haptic('good');score+=100;hits++;perfects++;combo++;bestCombo=Math.max(bestCombo,combo);eventIndex++;setFeedback('Correct · '+noteLabel(midi,keySigCount()<0),'Next note is ready immediately.','perfect');if(eventIndex>=events.length){completeSong();return;}updateHUD();renderScore();}
+  else {haptic('bad');setFeedback('Try '+noteLabel(target.midi,keySigCount()<0),'You played '+noteLabel(midi,keySigCount()<0)+'. The score is waiting for the correct key.','bad');}
+  return;
+ }
+ const delta=(beatPosition-target.beat)*60/tempo;
+ if(midi!==target.midi){haptic('bad');setFeedback('Not quite','Target is '+noteLabel(target.midi,keySigCount()<0)+'.','bad');return;}
+ if(Math.abs(delta)>hitWindow){haptic('bad');setFeedback(delta<0?'A little early':'A little late','Aim for the gold line.','bad');return;}
+ haptic('good');const isPerfect=Math.abs(delta)<=Math.min(.115,hitWindow*.55);
+ score+=isPerfect?100:70;hits++;if(isPerfect)perfects++;combo++;bestCombo=Math.max(bestCombo,combo);eventIndex++;
+ setFeedback(isPerfect?'Perfect!':'Good timing',`${noteLabel(midi,keySigCount()<0)} · ${Math.round(Math.abs(delta)*1000)} ms ${delta<0?'early':'late'}`,isPerfect?'perfect':'good');
+ if(eventIndex>=events.length){completeSong();return;}updateHUD();renderScore();
+}
+
+function keySignatureMap(){
+ const n=keySigCount(),map={};
+ const sharpOrder=['F','C','G','D','A','E','B'],flatOrder=['B','E','A','D','G','C','F'];
+ if(n>0)sharpOrder.slice(0,n).forEach(x=>map[x]='#');
+ if(n<0)flatOrder.slice(0,-n).forEach(x=>map[x]='b');
+ return map;
+}
+function noteY(note,bottom,lineGap){
+ const p=typeof note==='string'?parsePitch(note):note;
+ const idx=p.oct*7+({C:0,D:1,E:2,F:3,G:4,A:5,B:6})[p.letter];
+ const e4=4*7+2;
+ return bottom-(idx-e4)*lineGap/2;
+}
+function signatureNotes(){
+ const n=keySigCount();const out=[];
+ const sharp=[['F',5],['C',5],['G',5],['D',5],['A',4],['E',5],['B',4]];
+ const flat=[['B',4],['E',5],['A',4],['D',5],['G',4],['C',5],['F',4]];
+ if(n>0)sharp.slice(0,n).forEach(([l,o])=>out.push({letter:l,oct:o,acc:'#'}));
+ if(n<0)flat.slice(0,-n).forEach(([l,o])=>out.push({letter:l,oct:o,acc:'b'}));
+ return out;
+}
+function resizeCanvas(){
+ const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
+ dpr=Math.min(2,window.devicePixelRatio||1);canvasW=w;canvasH=h;
+ canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);renderScore();
+}
+function drawLedger(x,y,bottom,top,gap){
+ ctx.strokeStyle='#71819c';ctx.lineWidth=1;
+ for(let yy=bottom+gap;yy<=y+1;yy+=gap){ctx.beginPath();ctx.moveTo(x-11,yy);ctx.lineTo(x+11,yy);ctx.stroke();}
+ for(let yy=top-gap;yy>=y-1;yy-=gap){ctx.beginPath();ctx.moveTo(x-11,yy);ctx.lineTo(x+11,yy);ctx.stroke();}
+}
+function renderScore(){
+ if(!ctx||!canvasW)return;
+ const w=canvas.clientWidth||canvasW,h=canvas.clientHeight||canvasH;if(!w||!h)return;
+ ctx.clearRect(0,0,w,h);
+ const gap=Math.max(9,Math.min(12,h/11)),bottom=Math.min(h-34,Math.max(75,h*.67)),top=bottom-gap*4;
+ const grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#0c1629');grad.addColorStop(1,'#101e34');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+ ctx.fillStyle='#93a4bf';ctx.font='700 8px system-ui';ctx.fillText('TREBLE CLEF',10,13);
+ ctx.fillStyle='#f0d184';ctx.font='700 8px system-ui';ctx.textAlign='right';ctx.fillText((activityType==='intervals'?'HARMONIC INTERVALS':song.title).toUpperCase(),w-10,13);ctx.textAlign='left';
+ ctx.strokeStyle='#536781';ctx.lineWidth=1;
+ for(let i=0;i<5;i++){const y=top+i*gap;ctx.beginPath();ctx.moveTo(9,y);ctx.lineTo(w-9,y);ctx.stroke();}
+ ctx.fillStyle='#d6dfed';ctx.font=`${Math.max(35,Math.min(48,gap*4.1))}px "Noto Music","Segoe UI Symbol",serif`;ctx.fillText('𝄞',13,top+gap*4.05);
+ const sig=signatureNotes();let sigX=54;
+ sig.forEach(p=>{const y=noteY(p,bottom,gap);ctx.fillStyle='#b8c9df';ctx.font='17px Georgia,serif';ctx.fillText(p.acc==='#'?'♯':'♭',sigX,y+5);sigX+=12;});
+ const meter=(activityType==='intervals'?'4/4':(song.meter||'4/4')).split('/');const timeX=sigX+4;ctx.fillStyle='#dce6f7';ctx.font='bold 12px Georgia,serif';ctx.fillText(meter[0]||'4',timeX,top+12);ctx.fillText(meter[1]||'4',timeX,top+25);
+ const barBeats=activityType==='intervals'?4:(song.barBeats||4),hitX=Math.max(timeX+28,Math.min(190,w*.27));
+ const pxPerBeat=mode==='timed'?(60/tempo)*73*scrollSpeed:49;
+ const currentBeat=mode==='timed'?beatPosition:(events[eventIndex]?.beat??events[events.length-1]?.beat??0);
+ function beatX(b){return hitX+(b-currentBeat)*pxPerBeat;}
+ const totalBeats=events.length?events[events.length-1].beat+events[events.length-1].dur:64;
+ for(let b=Math.floor(currentBeat/barBeats)*barBeats-barBeats;b<=Math.min(totalBeats+barBeats,currentBeat+36);b+=barBeats){
+  const x=beatX(b);if(x<sigX+18||x>w-7)continue;
+  ctx.strokeStyle='#435873';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,top-4);ctx.lineTo(x,bottom+14);ctx.stroke();
+  ctx.fillStyle='#71839e';ctx.font='7px system-ui';ctx.fillText(String(Math.floor(b/barBeats)+1),x+2,top-6);
+ }
+ ctx.save();ctx.strokeStyle='#efc86f';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(hitX,top-14);ctx.lineTo(hitX,bottom+19);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#efc86f';ctx.beginPath();ctx.arc(hitX,top-15,3.5,0,Math.PI*2);ctx.fill();ctx.restore();
+ const base=keySignatureMap();let activeBar=-1,accState={};
+ const start=Math.max(0,events.findIndex(e=>e.beat>=currentBeat-12));const end=Math.min(events.length,events.findIndex(e=>e.beat>currentBeat+40)===-1?events.length:events.findIndex(e=>e.beat>currentBeat+40)+1);
+ for(let i=0;i<end;i++){
+  const e=events[i],bar=Math.floor((e.beat+1e-8)/barBeats);
+  if(bar!==activeBar){activeBar=bar;accState={};}
+  if(i<start)continue;
+  const x=beatX(e.beat);if(x<sigX+12||x>w+20)continue;
+  const notes=e.names?e.names.map(parsePitch):[parsePitch(e.name)],isTarget=i===eventIndex,filled=e.dur<1.75,whole=e.dur>=3.5;
+  const ys=notes.map(p=>noteY(p,bottom,gap));
+  notes.forEach((p,ni)=>{
+   const k=p.letter+p.oct,baseAcc=base[p.letter]||'',currentAcc=(accState[k]!==undefined?accState[k]:baseAcc),showAcc=p.acc!==currentAcc;
+   if(showAcc)accState[k]=p.acc;else if(accState[k]===undefined)accState[k]=baseAcc;
+   const y=ys[ni];drawLedger(x,y,bottom,top,gap);
+   const isBlackKey=[1,3,6,8,10].includes(((p.midi%12)+12)%12);
+   const pitchInk=notationColorMode?(isBlackKey?'#4bd8e8':'#c6b5ff'):'#e8effb';
+   const noteInk=isTarget?'#ffe09a':pitchInk;
+   const secondsApart=notes.length>1&&Math.abs(notes[0].midi-notes[1].midi)<=2;
+   const headX=x+(secondsApart?(ni===0?-4:4):0);
+   if(showAcc){ctx.fillStyle=isTarget?'#f0d183':pitchInk;ctx.font='15px Georgia,serif';const glyph=p.acc==='##'?'𝄪':p.acc==='bb'?'𝄫':p.acc==='#'?'♯':p.acc==='b'?'♭':'♮';ctx.fillText(glyph,x-16-ni*8,y+5);}
+   if(isTarget){ctx.save();ctx.fillStyle='#edc66d22';ctx.strokeStyle='#edc66d';ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(headX,y,11,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore();}
+   ctx.save();ctx.translate(headX,y);ctx.rotate(-.22);ctx.beginPath();ctx.ellipse(0,0,6.3,4.4,0,0,Math.PI*2);ctx.fillStyle=noteInk;ctx.strokeStyle=noteInk;ctx.lineWidth=1.2;if(filled)ctx.fill();ctx.stroke();ctx.restore();
+   if(notes.length===1&&[0.75,1.5,3].some(v=>Math.abs(e.dur-v)<.035)){ctx.fillStyle=noteInk;ctx.beginPath();ctx.arc(x+12,y-1,1.8,0,Math.PI*2);ctx.fill();}
+  });
+  if(!whole){
+   const stemUp=notes.reduce((sum,p)=>sum+p.midi,0)/notes.length<71;
+   const sx=stemUp?x+5.8:x-5.8,edge=stemUp?Math.max(...ys):Math.min(...ys),ey=stemUp?Math.min(...ys)-30:Math.max(...ys)+30;
+   const stemInk=isTarget?'#f5d17b':(notationColorMode?'#c6b5ff':'#e8effb');ctx.strokeStyle=stemInk;ctx.lineWidth=1.35;ctx.beginPath();ctx.moveTo(sx,edge);ctx.lineTo(sx,ey);ctx.stroke();
+   const flags=e.dur<=0.27?2:e.dur<=0.78?1:0;
+   for(let f=0;f<flags;f++){const fy=ey+(stemUp?f*5:-f*5);ctx.beginPath();ctx.moveTo(sx,fy);ctx.quadraticCurveTo(sx+(stemUp?12:-12),fy+(stemUp?4:-4),sx+(stemUp?8:-8),fy+(stemUp?12:-12));ctx.stroke();}
+  }
+  if(Math.abs(e.dur-.333)<.035&&i%3===0){ctx.fillStyle=isTarget?'#f5d17b':'#c6b5ff';ctx.font='8px Georgia,serif';ctx.fillText('3',x-2,Math.min(...ys)-15);}
+ }
+
+ // Rests fill any remainder before a repeated study phrase restarts on a bar.
+ phraseRests.forEach(rest=>{
+  let x=beatX(rest.beat),remaining=rest.dur;
+  if(x<sigX+10||x>w-10)return;
+  if(rest.kind==='lead'&&Math.abs(remaining-1/3)<.035){
+   // A triplet-eighth lead-in rest: eighth-rest glyph plus the triplet 3.
+   ctx.fillStyle='#aebed4';ctx.font='18px "Noto Music","Segoe UI Symbol",serif';
+   ctx.fillText('𝄾',x,top+gap*2+5);ctx.font='bold 8px Georgia,serif';ctx.fillText('3',x+8,top+gap*2-6);
+   return;
+  }
+  const symbols=[{v:4,g:'𝄻'},{v:2,g:'𝄼'},{v:1,g:'𝄽'},{v:.5,g:'𝄾'},{v:.25,g:'𝄿'}];
+  ctx.fillStyle='#aebed4';ctx.font='18px "Noto Music","Segoe UI Symbol",serif';
+  for(const sym of symbols){
+   while(remaining>=sym.v-.001&&x<w-8){ctx.fillText(sym.g,x,top+gap*2+5);remaining-=sym.v;x+=Math.max(13,pxPerBeat*sym.v*.72);}
+  }
+ });
+ ctx.fillStyle='#f0cc79';ctx.font='700 8px system-ui';ctx.fillText(mode==='timed'?'PLAY HERE':'WAITING NOTE',hitX-25,Math.min(h-4,bottom+31));
+ if(mode==='practice'&&playState==='running'){ctx.fillStyle='#a4b5ce';ctx.font='8px system-ui';ctx.fillText('THE SCORE MOVES WHEN YOU PLAY',Math.max(hitX+35,w-180),h-7);}
+ $('scrollLabel').textContent='SCROLL '+scrollSpeed.toFixed(1)+'×';
+ const colorLegend=$('notationLegend');if(colorLegend)colorLegend.hidden=!notationColorMode;
+}
+
+function buildKeyboard(){
+ const white=$('whiteKeys'),kb=$('keyboard');white.innerHTML='';keyButtons.clear();
+ WHITE_MIDI.forEach((m,i)=>{
+  const b=document.createElement('button');b.className='piano-key white';b.type='button';b.dataset.midi=m;b.setAttribute('aria-label',noteLabel(m)+' piano key');
+  const lab=document.createElement('span');lab.className='key-label';lab.textContent=noteLabel(m);b.appendChild(lab);b.addEventListener('pointerdown',e=>{e.preventDefault();onKey(m)});white.appendChild(b);keyButtons.set(m,b);
+ });
+ const black=[];for(let m=LOW;m<=HIGH;m++){if([1,3,6,8,10].includes(m%12))black.push(m)}
+ black.forEach(m=>{
+  const b=document.createElement('button');b.className='piano-key black';b.type='button';b.dataset.midi=m;b.setAttribute('aria-label',noteLabel(m)+' piano key');
+  const lab=document.createElement('span');lab.className='key-label';lab.textContent=noteLabel(m);b.appendChild(lab);b.addEventListener('pointerdown',e=>{e.preventDefault();onKey(m)});
+  const prevWhite=WHITE_MIDI.filter(n=>n<m).length-1;const whiteW=100/14;const blackW=whiteW*.62;
+  b.style.left=((prevWhite+1)*whiteW-blackW/2)+'%';
+  kb.appendChild(b);keyButtons.set(m,b);
+ });
+}
+function importSongsFile(file){
+ const reader=new FileReader();reader.onload=()=>{
+  try{
+   const raw=JSON.parse(reader.result),list=Array.isArray(raw)?raw:[raw];let added=0;
+   list.forEach(s=>{
+    if(!s||!s.title||!s.composer||!s.key||!s.tonic||(!Array.isArray(s.phrase)&&typeof s.phrase!=='string'))throw new Error('Each song needs title, composer, key, tonic, and a phrase array or note string.');
+    const phraseText=Array.isArray(s.phrase)?s.phrase.join(' '):s.phrase;
+    if(phraseText.trim().split(/[\s,]+/).filter(Boolean).length<8)throw new Error('A phrase needs at least 8 notes.');
+    const importedMeter=String(s.meter||'4/4'),meterParts=importedMeter.split('/').map(Number),inferredBarBeats=(meterParts[0]>0&&meterParts[1]>0)?meterParts[0]*4/meterParts[1]:4;
+    const normalized={...s,id:String(s.id||('custom-'+Date.now()+'-'+added)),phrase:phraseText,mode:s.mode==='minor'?'minor':'major',bpm:Math.max(20,Math.min(300,Number(s.bpm)||100)),meter:importedMeter,barBeats:Math.max(.5,Math.min(12,Number(s.barBeats)||inferredBarBeats)),chords:Array.isArray(s.chords)?s.chords:[0,3,4,0]};
+    const importedNotes=normalized.phrase.split(/[\s,]+/).filter(Boolean);importedNotes.forEach(n=>{const p=parsePitch(n);if(p.midi<LOW||p.midi>HIGH)throw new Error(n+' is outside the keyboard range C4–B5.');});
+    if(normalized.rhythm&&(!Array.isArray(normalized.rhythm)||normalized.rhythm.length!==importedNotes.length||normalized.rhythm.some(d=>!Number.isFinite(Number(d))||Number(d)<=0||Number(d)>8)))throw new Error('rhythm must contain one positive beat-length value per note (maximum 8 beats).');
+    if(!songs.some(old=>old.id===normalized.id)){songs.push(normalized);added++;}
+   });
+   try{localStorage.setItem('classicKeysCustomSongs',JSON.stringify(songs.filter(s=>!SONGS.some(base=>base.id===s.id))))}catch(e){}
+   renderSongList();if(added){const latest=songs[songs.length-1];$('songSelect').value=latest.id;loadSong(latest.id);setFeedback('Song added',`${added} custom piece${added===1?'':'s'} imported.`,'good');}
+  }catch(err){alert('Could not import song JSON: '+err.message)}
+ };reader.readAsText(file);
+}
+function loadCustomSongs(){
+ try{const saved=JSON.parse(localStorage.getItem('classicKeysCustomSongs')||'[]');saved.forEach(s=>{try{if(s&&s.id&&s.phrase){s.phrase.split(/[\s,]+/).forEach(n=>{const p=parsePitch(n);if(p.midi<LOW||p.midi>HIGH)throw 0});if(!songs.some(x=>x.id===s.id))songs.push(s)}}catch(e){}})}catch(e){}
+}
+function isMobileLayout(){return frame.classList.contains('mobile-mode')&&!frame.classList.contains('desktop-mode')}
+function updateOrientationState(){
+ const portrait=window.matchMedia&&window.matchMedia('(orientation: portrait)').matches;
+ const shouldPrompt=!$('playScreen').hidden&&isMobileLayout()&&portrait;
+ frame.classList.toggle('portrait-play',shouldPrompt);
+ if(!shouldPrompt)requestAnimationFrame(resizeCanvas);
+}
+async function showPlayScreen(){
+ if(activityType==='songs')recordRecentSong(song.id);
+ // Android Chrome can lock to landscape after entering fullscreen from this tap.
+ // Browsers without this capability fall back to the explicit rotate-device prompt.
+ if(isMobileLayout()&&!document.fullscreenElement){
+  try{if(frame.requestFullscreen){await frame.requestFullscreen({navigationUI:'hide'});}}
+  catch(e){/* Fullscreen is optional; manual landscape still works. */}
+  try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape');}
+  catch(e){/* iOS/Safari and some browser contexts require manual rotation. */}
+ }
+ $('homeScreen').hidden=true;$('playScreen').hidden=false;
+ $('playSongTitle').textContent=activityType==='intervals'?'Harmonic interval practice':song.title;$('playModeName').textContent=(activityType==='intervals'?'HARMONIC INTERVALS · ':'')+(mode==='timed'?'PLAY IN TIME':'OWN PACE');
+ updateOrientationState();resetGame();resizeCanvas();begin();
+}
+function showHomeScreen(){
+ releaseScreenWakeLock();if(rafId)cancelAnimationFrame(rafId);rafId=0;playState='idle';
+ frame.classList.remove('portrait-play');
+ try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}
+ if(document.fullscreenElement){try{document.exitFullscreen().catch(()=>{})}catch(e){}}
+ $('playScreen').hidden=true;$('homeScreen').hidden=false;
+ resetGame();
+}
+function attachEvents(){
+ $('songSelect').addEventListener('change',e=>{if(e.target.value)loadSong(e.target.value)});
+ $('songActivityTab').addEventListener('click',()=>setActivityType('songs'));$('intervalActivityTab').addEventListener('click',()=>setActivityType('intervals'));
+ $('intervalSet').addEventListener('change',e=>{intervalSet=e.target.value;buildEvents();resetGame();updateSongInfo();savePreferences();renderScore()});
+ $('intervalRoot').addEventListener('change',e=>{intervalRoot=e.target.value;buildEvents();resetGame();updateSongInfo();savePreferences();renderScore()});
+ $('songSearch').addEventListener('input',()=>renderSongList());
+ $('filterAll').addEventListener('click',()=>setLibraryFilter('all'));$('filterFavorites').addEventListener('click',()=>setLibraryFilter('favorites'));$('filterRecent').addEventListener('click',()=>setLibraryFilter('recent'));
+ $('favoriteBtn').addEventListener('click',()=>{if(!song)return;if(favorites.has(song.id))favorites.delete(song.id);else favorites.add(song.id);savePreferences();renderSongList()});
+ $('enterPlayBtn').addEventListener('click',showPlayScreen);$('enterIntervalBtn').addEventListener('click',showPlayScreen);$('backHomeBtn').addEventListener('click',showHomeScreen);$('orientationBackBtn').addEventListener('click',showHomeScreen);
+ $('startBtn').addEventListener('click',begin);$('resetBtn').addEventListener('click',resetGame);
+ $('timedTab').addEventListener('click',()=>setMode('timed'));$('practiceTab').addEventListener('click',()=>setMode('practice'));
+ $('mobileMode').addEventListener('click',()=>{frame.classList.remove('desktop-mode');$('mobileMode').classList.add('active');$('desktopMode').classList.remove('active');$('mobileMode').setAttribute('aria-pressed','true');$('desktopMode').setAttribute('aria-pressed','false');savePreferences();setTimeout(()=>{updateOrientationState();resizeCanvas()},50)});
+ $('desktopMode').addEventListener('click',()=>{frame.classList.add('desktop-mode');$('desktopMode').classList.add('active');$('mobileMode').classList.remove('active');$('desktopMode').setAttribute('aria-pressed','true');$('mobileMode').setAttribute('aria-pressed','false');savePreferences();setTimeout(()=>{updateOrientationState();resizeCanvas()},50)});
+ $('tempo').addEventListener('input',e=>{tempoFactor=Math.max(.25,Math.min(1.5,Number(e.target.value)/100));tempo=Math.max(1,Math.round((activityType==='intervals'?INTERVAL_BASE_BPM:(Number(song.bpm)||105))*tempoFactor));buildEvents();resetGame();updateSongInfo();savePreferences();renderScore()});
+ $('scroll').addEventListener('input',e=>{scrollSpeed=Number(e.target.value);$('scrollOut').textContent=scrollSpeed.toFixed(1)+'×';savePreferences();renderScore()});
+ $('volume').addEventListener('input',()=>{setVolume();savePreferences()});
+ $('backingToggle').addEventListener('change',savePreferences);
+ $('hapticsToggle').addEventListener('change',e=>{hapticsEnabled=!!e.target.checked;savePreferences()});
+ $('notationColorToggle').addEventListener('change',e=>{notationColorMode=!!e.target.checked;try{localStorage.setItem('classicKeysNotationColor',notationColorMode?'true':'false')}catch(err){}savePreferences();renderScore();});
+ $('tolerance').addEventListener('input',e=>{hitWindow=Number(e.target.value)/1000;$('toleranceOut').textContent='±'+e.target.value+' ms';savePreferences()});
+ $('importBtn').addEventListener('click',()=>$('songFile').click());
+ $('songFile').addEventListener('change',e=>{if(e.target.files?.[0])importSongsFile(e.target.files[0]);e.target.value=''});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseScreenWakeLock();else if(playState==='running')requestScreenWakeLock()});
+ window.addEventListener('resize',()=>{updateOrientationState();resizeCanvas()});
+ window.addEventListener('orientationchange',()=>{setTimeout(()=>{updateOrientationState();resizeCanvas()},120)});
+ if(screen.orientation&&screen.orientation.addEventListener)screen.orientation.addEventListener('change',()=>{updateOrientationState();resizeCanvas()});
+ document.addEventListener('fullscreenchange',()=>{updateOrientationState();resizeCanvas()});
+ window.addEventListener('keydown',e=>{
+  if(e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;
+  const tag=e.target?.tagName;if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA')return;
+  const k=e.key.toLowerCase(),idx=KEYMAP.indexOf(k);if(idx>=0){e.preventDefault();onKey(LOW+idx)}
+  if(e.code==='Space'){e.preventDefault();begin()}
+ });
+}
+function boot(){
+ loadCustomSongs();restorePreferences();$('intervalSet').value=intervalSet;$('intervalRoot').value=intervalRoot;setActivityType(activityType);renderSongList();buildKeyboard();buildEvents();
+ $('scrollOut').textContent=scrollSpeed.toFixed(1)+'×';$('toleranceOut').textContent='±'+Math.round(hitWindow*1000)+' ms';$('playModeName').textContent=mode==='timed'?'PLAY IN TIME':'OWN PACE';
+ $('timedTab').classList.toggle('active',mode==='timed');$('practiceTab').classList.toggle('active',mode==='practice');
+ updateSongInfo();setVolume();attachEvents();resizeCanvas();resetGame();savePreferences();
+}
+boot();
+</script>
+</body>
+</html>
